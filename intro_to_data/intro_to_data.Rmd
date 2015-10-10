@@ -423,7 +423,7 @@ will serve us well throughout this course.
 -   Let's consider a new variable: the difference between desired weight 
     (`wtdesire`) and current weight (`weight`). Create this new variable by 
     subtracting the two columns in the data frame and assigning them to a new 
-    object called `wdiff`.
+    variable called `wdiff`.
 
 -   What type of data is `wdiff`? If an observation `wdiff` is 0, what does 
     this mean about the person's weight and desired weight. What if `wdiff` is 
