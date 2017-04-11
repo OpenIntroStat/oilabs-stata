@@ -60,15 +60,15 @@ following videos describing why and how:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/o0h-eVABe9M" frameborder="0" allowfullscreen></iframe>
 -->
 
-### do files
+### Do-files
 
-In Stata, you can enter code interactively ("on the fly") in the Command window, or save it in a separate file called a do file.  It is always better to save code in a separate do file because
+In Stata, you can enter code interactively ("on the fly") in the Command window, or save it in a separate file called a do-file.  It is always better to save code in a separate do-file because
 
 - You can save your code cleanly.
 - You can annotate your code with comments explaining what you were trying to do.
 - You can share your work with others.
 
-In these labs, you should always use a do file to record any code that you create.  To create a new do file, select the button at the top for a new do file editor:
+In these labs, you should always use a do-file to record any code that you create.  To create a new do-file, select the button at the top corresponding to Do-file Editor:
 
 ![](more/stata-interface-2017-mac-do.png)
 <br>
@@ -79,6 +79,9 @@ Or choose file -> new -> do file editor from the drop down menu.
 
 ![](more/stata-dofile.png)
 <br>
+
+
+Using either approach, a new window will open that is your do-file.  Save this file to wherever you would like to store your code for this lab.
 
 ## Dr. Arbuthnot's Baptism Records
 
