@@ -5,8 +5,12 @@ output:
     css: ../lab.css
     highlight: pygments
     theme: cerulean
-    toc: true
-    toc_float: true
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
 ---
 
 ```{r global_options, include=FALSE}
@@ -27,24 +31,22 @@ Welcome to OpenIntro Labs using Stata!  Stata is a program for statistical compu
 
 You can apply statistical methods in Stata using either the drop-down series of menus or using some programming.  These labs will focus on teaching programming skills using Stata. 
 
-This lab assumes that you have already installed Stata.  Stata is available for purchase at <www.stata.com>.  You may also wish to see whether your university has Stata licenses available for your use.
+This lab assumes that you have already installed Stata.  Stata is available for purchase at <http://www.stata.com>.  You may also wish to see whether your university has Stata licenses available for your use.
 
 First, launch Stata as you would with any program on your computer.  The first screen you see should look something like this:
 
 
-![](more/stata-interface-2017-mac.png)
+![Stata interface](more/stata-interface-2017-mac.png)
 <br>
 
-You will notice several areas of the screen.  The bottom rectangle is the *Command window*, where you can enter Stata code interactively (or "on the fly'') that you wish to run.  The results will display in the *Results window* above the command line.  When you open Stata, the Results window displays information about the Stata program you are running.  
+You will notice several areas of the screen.  The bottom rectangle is the *Command window*, where you can enter Stata code interactively (or "on the fly'') that you wish to run.  The results will display in the *Results window* above the command line.  When you open Stata, the Results window displays information about the version of Stata that you are running.  
 
-The information on the right summarizes information about what information, for example data, we have to work with in Stata. Currently, we do not have any data or information loaded into Stata, so that area is blank.   
+The right panel summarizes what information, for example data, is currently available to work with in Stata. In this screen above, we do not have any data or information loaded into Stata, so that area is blank.   
 
 <!--- This information obtained from:
 http://www.stata.com/features/overview/graphical-user-interface/ -->
 
-### Updating Stata
 
-You will notice that on the opening screen, it said to update.
 
 
 <!--- Perhaps add this back in? 
@@ -60,24 +62,49 @@ following videos describing why and how:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/o0h-eVABe9M" frameborder="0" allowfullscreen></iframe>
 -->
 
+
+### Working directory
+
+Each time you open Stata, it is a good idea to know where your *working directory* is set to.  The *working directory* is where Stata looks for Stata-related files, such as datasets or code.  We recommend creating a folder for your labs on your computer and setting your working directory there. You should save all datasets for these labs in this folder.
+
+You can view the current working directory by looking at the bottom of the screen:
+
+![Stata interface](more/currentwd.png)
+<br>
+
+You can also check the current working directory by typing `pwd` into the *Command window* and pressing enter.  
+
+![Stata interface](more/pwd.png)
+<br>
+
+If your *working directory* is not set to where you would like Stata to look, you can change this to another folder on your computer.  You can set the working directory through the dropdown menu:
+
+![Stata interface](more/changewd.png)
+<br>
+
+You can also set the working directory using the command "cd" followed by the path on your computer.
+
+![Stata interface](more/changewd2.png)
+<br>
+
 ### Do-files
 
-In Stata, you can enter code interactively ("on the fly") in the Command window, or save it in a separate file called a do-file.  It is always better to save code in a separate do-file because
+In Stata, you can enter code interactively ("on the fly") in the *Command window*.  We have shown this above with the `pwd` and `cd` commands.  You can also save your code in a separate file called a do-file.  It is always better to save code in a separate do-file because:
 
 - You can save your code cleanly.
 - You can annotate your code with comments explaining what you were trying to do.
-- You can share your work with others.
+- You can easily share your work with others.
 
 In these labs, you should always use a do-file to record any code that you create.  To create a new do-file, select the button at the top corresponding to Do-file Editor:
 
-![](more/stata-interface-2017-mac-do.png)
+![Stata interface](more/stata-interface-2017-mac-do.png)
 <br>
 
 
 
 Or choose file -> new -> do file editor from the drop down menu.
 
-![](more/stata-dofile.png)
+![Do-file](more/stata-dofile.png)
 <br>
 
 
@@ -85,269 +112,177 @@ Using either approach, a new window will open that is your do-file.  Save this f
 
 ## Dr. Arbuthnot's Baptism Records
 
-To get you started, run the following command to load the data.
+### Loading data into Stata
 
-```{r load-abrbuthnot-data, eval=TRUE}
-data(arbuthnot)
+In this lab, we will use a datafile called arbuthnot.dta. Datafiles with the extension ".dta" are Stata datafiles, and they are the easiest to read into Stata.  There are three options:
+
+- Double click the dataset in your file folder on your computer.
+- Choose file -> open and select the file folder on your computer.
+- Using Stata code in your do-file.
+
+We will focus on the last option because it is "reproducible" in the sense that others can see from your do-file what dataset you have loaded.  First, open up a new do-file using the instructions above and save it to a folder called "Lab-dofiles" within your *OpenIntroLabs* folder.  From now on, we assume that you type the given code into your do-file.  
+
+To run code from your do-file in Stata, you can highlight the code you would like to run and:
+
+- Select the "Do" button on the right-hand side of the screen.
+- Windows: Type ctrl-D (control button-letter D)
+- Mac: Type command-shift-D
+
+Make sure your working directory is set to your OpenIntroLabs folder, and that the dataset "arbuthnot.dta" is within this folder.  Then enter the following into your do-file and run the code: 
+
+
+```{r load-abrbuthnot-data, eval=F}
+use "arbuthnot.dta"
 ```
 
-You can do this by
 
-- clicking on the green arrow at the top right of the code chunk in the R Markdown (Rmd) 
-file, or
-- putting your cursor on this line, and hit the **Run** button on the upper right 
-corner of the pane, or
-- hitting `Ctrl-Shift-Enter`, or
-- typing the code in the console.
+You'll notice that Stata does not provide any feedback, other than repeating the code you wrote in the *Results window*.  If you do no receive an error in red font, the data likely has been loaded into Stata.
 
-This command instructs R to load some data: 
-the Arbuthnot baptism counts for boys and girls. You should see that the 
-workspace area in the upper righthand corner of the RStudio window now lists a 
-data set called `arbuthnot` that has 82 observations on 3 variables. As you 
-interact with R, you will create a series of objects. Sometimes you load them as
-we have done here, and sometimes you create them yourself as the byproduct of a 
-computation or some analysis you have performed.
+Once the dataset is loaded, there will be additional information in the *Variables window* in the top right corner.  Specifically, we see three variables: year, boys, girls.  If you click on each variable in the top right, information about the variable is presented in the *Properties window* in the bottom right.  Additionally, if you scroll down in the *Properties window*, you can see information about the Arbuthnot baptism data, including the number of variables (3) and the number of observations (82).
+
+### Background on Arbuthnot baptism data
+
+<!-- Directly from original OpenIntro lab: Okay?-->
+
 
 The Arbuthnot data set refers to Dr. John Arbuthnot, an 18<sup>th</sup> century 
 physician, writer, and mathematician. He was interested in the ratio of newborn
 boys to newborn girls, so he gathered the baptism records for children born in
-London for every year from 1629 to 1710. We can view the data by 
-typing its name into the console.
+London for every year from 1629 to 1710. 
 
-```{r view-data}
-arbuthnot
-```
+### Interacting with data
 
-However printing the whole dataset in the console is not that useful. 
-One advantage of RStudio is that it comes with a built-in data viewer. Click on
-the name `arbuthnot` in the *Environment* pane (upper right window) that lists 
-the objects in your workspace. This will bring up an alternative display of the 
-data set in the *Data Viewer* (upper left window). You can close the data viewer
-by clicking on the `x` in the upper lefthand corner.
+To view the dataset in Stata, you can click the "Data Browser" button at the top of Stata.
 
-What you should see are four columns of numbers, each row representing a 
-different year: the first entry in each row is simply the row number (an index 
-we can use to access the data from individual years if we want), the second is 
-the year, and the third and fourth are the numbers of boys and girls baptized 
-that year, respectively. Use the scrollbar on the right side of the console 
-window to examine the complete data set.
+![Data browser](more/browse.png)
+<br>
 
-Note that the row numbers in the first column are not part of Arbuthnot's data. 
-R adds them as part of its printout to help you make visual comparisons. You can
-think of them as the index that you see on the left side of a spreadsheet. In 
-fact, the comparison to a spreadsheet will generally be helpful. R has stored 
-Arbuthnot's data in a kind of spreadsheet or table called a *data frame*.
+Here, you can see the three variables again: year, boys, and girls.  Each row represents a different year, starting with 1629 and ending with 1710, for a total of 82 observations.  The columns "boys" and "girls" indicate the number of boys and girls baptized in each year, respectively.   
 
-You can see the dimensions of this data frame as well as the names of the variables and the first few observations by typing:
-
-```{r glimpse-data}
-glimpse(arbuthnot)
-```
-
-This command should output the following
-
-```{r glimpse-data-result, echo=FALSE, eval=TRUE}
-glimpse(arbuthnot)
-```
-
-We can see that there are 82 observations and 3 variables in this dataset. The variable names are `year`, `boys`, and `girls`. At this point, you might notice 
-that many of the commands in R look a  lot like functions from math class; that 
-is, invoking R commands means supplying a function with some number of arguments. 
-The `glimpse` command, for example, took a single argument, the name of a data frame. 
 
 ## Some Exploration
 
-Let's start to examine the data a little more closely. We can access the data in
-a single column of a data frame separately using a command like
+Going back to your Stata do-file, the command `codebook` provides a summary for each variable in your dataset.  This is not recommended for variables with many (hundreds of variables), but will be sufficient here.  
 
-```{r view-boys}
-arbuthnot$boys
+```{r, eval = F}
+use "arbuthnot.dta"
+codebook
 ```
 
-This command will only show the number of boys baptized each year. The dollar
-sign basically says "go to the data frame that comes before me, and find the 
-variable that comes after me".
+If we would like to only look at information about one variable, we could follow `codebook` with the variable of interest, e.g. girls.
 
-1. What command would you use to extract just the counts of girls baptized? Try
+```{r, eval = T}
+use "arbuthnot.dta"
+codebook girls
+```
+
+1. What command would you use to extract just information about boys baptized? Try
     it!
-    
-Notice that the way R has printed these data is different. When we looked at the
-complete data frame, we saw 82 rows, one on each line of the display. These data
-are no longer structured in a table with other variables, so they are displayed 
-one right after another. Objects that print out in this way are called *vectors*; 
-they represent a set of numbers. R has added numbers in [brackets] along the left
-side of the printout to indicate locations within the vector. For example, 5218 
-follows [1], indicating that 5218 is the first entry in the vector. And if [43] 
-starts a line, then that would mean the first number on that line would represent
-the 43rd entry in the vector.
-
 
 ### Data visualization
 
-R has some powerful functions for making graphics. We can create a simple plot 
-of the number of girls baptized per year with the command
+In Stata, the `scatter` command gives a simple plot of the number of girls baptized per year.
 
-```{r plot-girls-vs-year}
-qplot(x = year, y = girls, data = arbuthnot)
+```{r plot-girls-vs-year, eval = F}
+use "arbuthnot.dta"
+scatter girls year
 ```
 
-The `qplot()` function (meaning "quick plot") considers the type of data you have
-provided it and makes the decision to visualize it with a scatterplot. The plot
-should appear under the *Plots* tab of the lower right panel of RStudio. Notice 
-that the command above again looks like a function, this time with three arguments
-separated by commas. The first two arguments in the `qplot()` function specify 
-the variables for the x-axis and the y-axis and the third provides the name of the
-data set where they can be found. If we wanted to connect the data points with 
-lines, we could add a fourth argument to specify the geometry that we'd like.
-
-```{r plot-girls-vs-year-line}
-qplot(x = year, y = girls, data = arbuthnot, geom = "line")
+```{r plot-girls-vs-year2, eval = T, echo = F, results="hide"}
+use "arbuthnot.dta"
+scatter girls year
+graph export girls.png
 ```
 
-You might wonder how you are supposed to know that it was possible to add that 
-fourth argument. Thankfully, R documents all of its functions extensively. To 
-read what a function does and learn the arguments that are available to you, 
-just type in a question mark followed by the name of the function that you're 
-interested in. Try the following.
+![Scatterplot of girls over time](girls.png)
+<br>
 
-```{r plot-help, tidy = FALSE}
-?qplot
+
+
+You will notice that the first variable, girls, appears first in the command, and also appears on the y-axis.  The second variable, year, appears second in the command, and appears on the x-axis.  We can modify the plot using options in Stata.  Options in Stata are frequently specified after the main command and are preceded by a comma.  For example, if we wanted to change the color of the plotted points to red, we would type: 
+
+```{r plot-girls-vs-yearred, eval = F}
+scatter girls year, mcolor("red")
 ```
 
-Notice that the help file replaces the plot in the lower right panel. You can 
-toggle between plots and help files using the tabs at the top of that panel.
+To read about all the options available for scatterplots, you can access the help files by typing into Stata `help scatter`.
 
 2. Is there an apparent trend in the number of girls baptized over the years? 
 How would you describe it? (To ensure that your lab report is comprehensive,
 be sure to include the code needed to make the plot as well as your written
 interpretation.)
 
-### R as a big calculator
 
-Now, suppose we want to plot the total number of baptisms. To compute this, we 
-could use the fact that R is really just a big calculator. We can type in 
-mathematical expressions like
+### Stata as a calculator
+
+We can also use Stata to compute mathematical expressions, just like a calculator.  We only need to precede our mathematical expression with the command `display` to make Stata do computations.  For example, if we want to see the total number of baptisms in 1629, we could type:
 
 ```{r calc-total-bapt-numbers}
-5218 + 4683
+display 5218 + 4683
 ```
-
-to see the total number of baptisms in 1629. We could repeat this once for each 
-year, but there is a faster way. If we add the vector for baptisms for boys to 
-that of girls, R will compute all sums simultaneously.
-
-```{r calc-total-bapt-vars}
-arbuthnot$boys + arbuthnot$girls
-```
-
-What you will see are 82 numbers (in that packed display, because we aren’t 
-looking at a data frame here), each one representing the sum we’re after. Take a
-look at a few of them and verify that they are right.
 
 ### Adding a new variable to the data frame
 
-We'll be using this new vector to generate some plots, so we'll want to save it 
-as a permanent column in our data frame.
 
-```{r calc-total-bapt-vars-save}
-arbuthnot <- arbuthnot %>%
-  mutate(total = boys + girls)
+Alternatively, we could create a new variable corresponding to the sum of boys and girls using the `generate` command:
+.
+
+```{r calc-total-bapt-vars}
+use "arbuthnot.dta"
+generate total = boys + girls
 ```
 
-The `%>%` operator is called the **piping** 
-operator. It takes the output of the previous expression and pipes it into 
-the first argument of the function in the following one. 
-To continue our analogy with mathematical functions, `x %>% f(y)` is 
-equivalent to `f(x, y)`.
-
-<div id="boxedtext">
-**A note on piping: ** Note that we can read these three lines of code as the following: 
-
-*"Take the `arbuthnot` dataset and **pipe** it into the `mutate` function. 
-Mutate the `arbuthnot` data set by creating a new variable called `total` that is the sum of the variables
-called `boys` and `girls`. Then assign the resulting dataset to the object
-called `arbuthnot`, i.e. overwrite the old `arbuthnot` dataset with the new one
-containing the new variable."*
-
-This is equivalent to going through each row and adding up the `boys` 
-and `girls` counts for that year and recording that value in a new column called
-`total`.
-</div>
-
-<div id="boxedtext">
-**Where is the new variable? ** When you make changes to variables in your dataset, 
-click on the name of the dataset again to update it in the data viewer.
-</div>
-
-You'll see that there is now a new column called `total` that has been tacked on
-to the data frame. The special symbol `<-` performs an *assignment*, taking the 
-output of one line of code and saving it into an object in your workspace. In 
-this case, you already have an object called `arbuthnot`, so this command updates
-that data set with the new mutated column.
-
-We can make a plot of the total number of baptisms per year with the command
+After running the `generate` command, open up the *Data Browser* and verify the new variable, total, is added to the dataset.  We can make a plot of the total number of baptisms per year with the command:
 
 ```{r plot-total-vs-year}
-qplot(x = year, y = total, data = arbuthnot, geom = "line")
+use "arbuthnot.dta"
+scatter total year
 ```
 
 Similarly to how we computed the total number of births, we can compute the ratio 
 of the number of boys to the number of girls baptized in 1629 with
 
 ```{r calc-prop-boys-to-girls-numbers}
-5218 / 4683
+display 5218 / 4683
 ```
 
-or we can act on the complete columns with the expression
+or we can add a new variable that contains all the ratios by using the command `generate`:
 
 ```{r calc-prop-boys-to-girls-vars}
-arbuthnot <- arbuthnot %>%
-  mutate(boy_to_girl_ratio = boys / girls)
+use "arbuthnot.dta"
+generate ratio = boys / girls
 ```
 
 We can also compute the proportion of newborns that are boys in 1629
 
 ```{r calc-prop-boys-numbers}
-5218 / (5218 + 4683)
+display 5218 / (5218 + 4683)
 ```
 
-or this may also be computed for all years simultaneously and append it to the dataset:
+or this may also be computed for all years simultaneously and appended to the dataset:
 
 ```{r calc-prop-boys-vars}
-arbuthnot <- arbuthnot %>%
-  mutate(boy_ratio = boys / total)
+use "arbuthnot.dta"
+generate boyratio = boys / total
 ```
 
 Note that we are using the new `total` variable we created earlier in our calculations.
 
 3. Now, generate a plot of the proportion of boys born over time. What do you see? 
 
-<div id="boxedtext">
-**Tip: ** If you use the up and down arrow keys, you can scroll through your 
-previous commands, your so-called command history. You can also access it 
-by clicking on the history tab in the upper right panel. This will save 
-you a lot of typing in the future.
-</div>
-
 Finally, in addition to simple mathematical operators like subtraction and 
-division, you can ask R to make comparisons like greater than, `>`, less than,
+division, you can ask Stata to make comparisons like greater than, `>`, less than,
 `<`, and equality, `==`. For example, we can ask if boys outnumber girls in each 
 year with the expression
 
 ```{r boys-more-than-girls}
-arbuthnot <- arbuthnot %>%
-  mutate(more_boys = boys > girls)
+use "arbuthnot.dta"
+generate moreboys = boys > girls
 ```
 
 This command add a new variable to the `arbuthnot` dataframe containing the values
-of either `TRUE` if that year had more boys than girls, or `FALSE` if that year 
-did not (the answer may surprise you). This variable contains a different kind of 
-data than we have encountered so far. All other columns in the `arbuthnot` data 
-frame have values that are numerical (the year, the number of boys and girls). Here, 
-we've asked R to create *logical* data, data where the values are either `TRUE` 
-or `FALSE`. In general, data analysis will involve many different kinds of data 
-types, and one reason for using R is that it is able to represent and compute 
-with many of them.
+of either 1 if that year had more boys than girls, or 0 if that year 
+did not (the answer may surprise you). 
 
 * * *
 
@@ -355,12 +290,15 @@ with many of them.
 
 In the previous few pages, you recreated some of the displays and preliminary 
 analysis of Arbuthnot's baptism data. Your assignment involves repeating these 
-steps, but for present day birth records in the United States. Load the 
-present day data with the following command.
+steps, but for present day birth records in the United States. First, save the "present.dta" dataset to your OpenIntroLabs folder.  Then you will need to `clear` the current dataset from Stata using clear.  At this stage, you should have saved all your code in a do-file, and you do not need to save your datafile.  Load the present day data with the following command.
 
-```{r load-present-data}
-data(present)
+
+```{r load-present-data, eval = F}
+clear
+use "present.dta"
 ```
+
+
 
 The data are stored in a data frame called `present`.
 
@@ -377,49 +315,23 @@ The data are stored in a data frame called `present`.
 7.  In what year did we see the most total number of births in the U.S.? *Hint:*
     First calculate the totals and save it as a new variable. Then, sort your
     dataset in descending order based on the total column. You can do this
-    interactively in the data viewer by clicking on the arrows next to the 
-    variable names. To include the sorted result in your report you will need 
-    to use two new functions: `arrange` (for sorting). We can arrange the data 
-    in a descending order with another function: `desc` (for descending order).
-    Sample code provided below.
-    
-```{r eval=FALSE}
-present %>%
-  arrange(desc(total))
-```
+    by running the command `sort total`. 
 
+<!-- 
+How to do this in Stata?
 These data come from reports by the Centers for Disease Control. You can learn more about them
 by bringing up the help file using the command `?present`.
-
+-->
 
 <div id="license">
 This is a product of OpenIntro that is released under a 
 [Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
-This lab was adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
+This lab was adapted for Stata by Jenna R. Krall and adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
 from a lab written by Mark Hansen of UCLA Statistics.
 </div>
 
 * * *
 
-## Resources for learning R and working in RStudio
+## Resources for learning Stata
 
-That was a short introduction to R and RStudio, but we will provide you with more
-functions and a more complete sense of the language as the course progresses. 
-
-In this course we will be using R packages called `dplyr` for data wrangling 
-and `ggplot2` for data visualization. If you are googling for R code, make sure
-to also include these package names in your search query. For example, instead
-of googling "scatterplot in R", google "scatterplot in R with ggplot2".
-
-These cheatsheets may come in handy throughout the semester:
-
-- [RMarkdown cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
-- [Data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
-- [Data visualization cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/12/ggplot2-cheatsheet-2.0.pdf)
-
-Chester Ismay has put together a resource for new users of R, RStudio, and R Markdown
-[here](https://ismayc.github.io/rbasics-book).  It includes examples showing working with R Markdown files
-in RStudio recorded as GIFs.
-
-Note that some of the code on these cheatsheets may be too advanced for this course,
-however majority of it will become useful throughout the semester.
+This lab is meant to provide you with a brief introduction to Stata.  You may find it helpful to use Google to help you find code.  In addition, there is a useful list of resources at <http://www.stata.com/links/resources-for-learning-stata/>.
