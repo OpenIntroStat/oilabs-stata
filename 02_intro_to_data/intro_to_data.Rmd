@@ -10,7 +10,11 @@ output:
 ---
 
 ```{r global-options, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+# Need to specify path to Stata on local computer
+statapath <- "/Applications/Stata/StataSE.app/Contents/MacOS/StataSE"
+
+knitr::opts_chunk$set(eval = F, engine = "stata", engine.path = statapath, comment = "")
+
 library(dplyr)
 library(ggplot2)
 library(oilabs)
@@ -28,28 +32,12 @@ processing and subsetting.
 
 ## Getting started
 
-### Load packages
 
-In this lab we will explore the data using the `dplyr` package and visualize it 
-using the `ggplot2` package for data visualization. The data can be found in the
-companion package for OpenIntro labs, `oilabs`.
 
-Let's load the packages.
+### Creating a do-file
 
-```{r load-packages, message=FALSE}
-library(dplyr)
-library(ggplot2)
-library(oilabs)
-```
+Remember to store all your code for each lab in a separate do-files.  Do-files preserve the code for future use so you may reproduce each data analysis you complete.  See Lab 1 for information on creating do-files. 
 
-### Creating a reproducible lab report
-
-Remember that we will be using R Markdown to create reproducible lab reports. 
-See the following video describing how to get started with creating these 
-reports for this lab, and all future labs:
-
-[**Basic R Markdown with an OpenIntro Lab**](https://www.youtube.com/watch?v=Pdc368lS2hk)
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Pdc368lS2hk" frameborder="0" allowfullscreen></iframe>
 
 ### The data
 
@@ -59,29 +47,26 @@ Technology Administration (RITA). As its name implies, BTS collects and makes
 available transportation data, such as the flights data we will be working with 
 in this lab.
 
-We begin by loading the `nycflights` data frame. Type the following in your console
+We begin by loading the dataset `nycflights.dta` data frame. Remember to set your working directory to wherever your `nycflights.dta` is saved.  See Lab 1 for information about working directories.  Type the following in your do-file
 to load the data:
 
-```{r load-data, eval = TRUE}
-data(nycflights)
+```{r load-data}
+use "nycflights.dta"
 ```
 
-The data set `nycflights` that shows up in your workspace is a *data matrix*, 
+Now, open the *Data Browser* to view the dataset.  This dataset is a *data matrix*, 
 with each row representing an *observation* and each column representing a 
-*variable*. R calls this data format a **data frame**, which is a term that will 
-be used throughout the labs. For this data set, each *observation* is a single flight.
+*variable*. For this data set, each *observation* is a single flight.
 
-To view the names of the variables, type the command
+The names of the variables appear in the *Variables* window in the top right corner of Stata.  We can also use the `codebook` command alone in Stata to view information about all variables.  Alternatively, we can use `codebook` with a specific variable to view information about one variable.  For example, if we wanted to see information about the months for each flight, we could type:
 
-```{r names}
-names(nycflights)
+```{r names, eval = F}
+codebook month
 ```
 
-This returns the names of the variables in this data frame. The **codebook**
-(description of the variables) can be accessed by pulling up the help file:
-
-```{r}
-?nycflights
+```{r names2, eval = T, echo = F}
+use "nycflights.dta"
+codebook month
 ```
 
 One of the variables refers to the carrier (i.e. airline) of the flight, which 
@@ -106,12 +91,6 @@ is coded according to the following system.
     + `YV`:          Mesa Airlines Inc.
 
 
-A very useful function for taking a quick peek at your data frame and viewing
-its dimensions and data types is `str`, which stands for **str**ucture.
-
-```{r str}
-str(nycflights)
-```
 
 The `nycflights` data frame is a massive trove of information. Let's think about 
 some questions we might want to answer with these data:
@@ -124,63 +103,83 @@ departing flights?
 
 ## Analysis
 
-### Lab report
-To record your analysis in a reproducible format, you can adapt the general Lab 
-Report template from the `oilabs` package. Watch the video above to learn how.
-
 ### Departure delays
 
 Let's start by examing the distribution of departure delays of all flights with a 
-histogram.
+histogram.  The function `histogram` in Stata creates a histogram of the variable you select:
 
 ```{r hist-dep-delay}
-qplot(x = dep_delay, data = nycflights, geom = "histogram")
+histogram dep_delay
 ```
 
-This function says to plot the `dep_delay` variable from the `nycflights` data 
-frame on the x-axis. It also defines a `geom` (short for geometric object), 
-which describes the type of plot you will produce. 
+```{r hist-dep-delay2, eval = T, echo = F, results="hide"}
+use "nycflights.dta"
+histogram dep_delay
+graph export histdelay.png
+```
+
+
+<img src="histdelay.png" alt="Histogram of delays" style="width: 500px;"/>
+
 
 Histograms are generally a very good way to see the shape of a single 
 distribution of numerical data, but that shape can change depending on how the 
 data is split between the different bins. You can easily define the binwidth you 
-want to use:
+want to use by specifying the `bin` option in Stata.
 
-```{r hist-dep-delay-bins}
-qplot(x = dep_delay, data = nycflights, geom = "histogram", binwidth = 15)
-qplot(x = dep_delay, data = nycflights, geom = "histogram", binwidth = 150)
+
+```{r hist-dep-delay-bins15a}
+histogram dep_delay, bin(15)
 ```
+
+```{r hist-dep-delay-bins15b, eval = T, echo = F, results="hide"}
+use "nycflights.dta"
+histogram dep_delay, bin(15)
+graph export histdelay15.png
+```
+
+
+
+<img src="histdelay15.png" alt="Histogram of delays, bin = 15" style="width: 500px;"/>
+
+
+```{r hist-dep-delay-bins150a}
+histogram dep_delay, bin(150)
+```
+
+```{r hist-dep-delay-bins150b, eval = T, echo = F, results="hide"}
+use "nycflights.dta"
+histogram dep_delay, bin(150)
+graph export histdelay150.png
+```
+
+<img src="histdelay150.png" alt="Histogram of delays, bin = 150" style="width: 500px;"/>
 
 1.  Look carefully at these three histograms. How do they compare? Are features
 revealed in one that are obscured in another?
 
 If we want to focus only on departure delays of flights headed to Los Angeles, 
-we need to first `filter` the data for flights with that destination (`dest == "LAX"`)
-and then make a histogram of the departure delays of only those flights.
+we can use `if` in Stata.
 
 ```{r lax-flights-hist}
-lax_flights <- nycflights %>%
-  filter(dest == "LAX")
-qplot(x = dep_delay, data = lax_flights, geom = "histogram")
+histogram dep_delay if dest == "LAX"
 ```
 
-Let's decipher these two commands (OK, so it might look like three lines, but
-the first two physical lines of code are actually part of the same command. It's 
-common to add a break to a new line after `%>%` to help readability).
+```{r lax-flights-hist2, eval = T, echo = F, results="hide"}
+use "nycflights.dta"
+histogram dep_delay if dest == "LAX"
+graph export lax.png
+```
 
-- Command 1: Take the `nycflights` data frame, `filter` for flights headed to LAX, and 
-save the result as a new data frame called `lax_flights`.
-    + `==` means "if it's equal to".
-    + `LAX` is in quotation marks since it is a character string.
-- Command 2: Basically the same `qplot` call from earlier for making a histogram, 
-except that it uses the smaller data frame for flights headed to LAX instead of all
-flights.
+<img src="lax.png" alt="Histogram of delays at LAX" style="width: 500px;"/>
+
+
+
+The `if` condition in Stata allows the command to be restricted to only those observations that meet the `if` criteria.  Therefore, by adding `if dest == "LAX"` we are specifying that we only want to apply the command `histogram dep_delay` only to those observations whose destination is "LAX".  The double-equal (==) implies equality here.  "LAX" is in quotation because it is a character string. 
+
 
 <div id="boxedtext">
-**Logical operators: ** Filtering for certain observations (e.g. flights from a 
-particular airport) is often of interest in data frames where we might want to 
-examine observations with certain characteristics separately from the rest of 
-the data. To do so we use the `filter` function and a series of 
+**Logical operators: ** Restricting plots or analyses to a subset of observations that meet certain conditions can allow us to fully examine the data.  To do so we use `if` and a series of 
 **logical operators**. The most commonly used logical operators for data 
 analysis are as follows:
 
@@ -190,72 +189,59 @@ analysis are as follows:
 - `>=` or `<=` means "greater than or equal to" or "less than or equal to"
 </div>
 
-We can also obtain numerical summaries for these flights:
+### Summaries 
 
-```{r lax-flights-summ}
-lax_flights %>%
-  summarise(mean_dd = mean(dep_delay), median_dd = median(dep_delay), n = n())
+We can also obtain numerical summaries for the departure delays using the `summarize` command.
+
+```{r dep-flights-summ, eval = T}
+use "nycflights.dta"
+summarize dep_delay
 ```
 
-Note that in the `summarise` function we created a list of three different
-numerical summaries that we were interested in. The names of these elements are 
-user defined, like `mean_dd`, `median_dd`, `n`, and you could customize these names 
-as you like (just don't use spaces in your names). Calculating these summary 
-statistics also require that you know the function calls. Note that `n()` reports
-the sample size.
+Just as in `histogram`, if we want to summarize only one variable, we place it after the `summarize` command.  We can add the Stata option `detail` to obtain more information:
 
-<div id="boxedtext">
-**Summary statistics: ** Some useful function calls for summary statistics for a 
-single numerical variable are as follows:
+```{r dep-flights-summ2, eval = T}
+use "nycflights.dta"
+summarize dep_delay, detail
+```
 
-- `mean`
-- `median`
-- `sd`
-- `var`
-- `IQR`
-- `min`
-- `max`
+We can also again restrict the summary to only those flights whose destination is LAX.  We do this using the same `if dest == "LAX"` as before.
 
-Note that each of these functions take a single vector as an argument, and 
-returns a single value. 
-</div>
 
-We can also filter based on multiple criteria. Suppose we are interested in
+```{r lax-flights-summ, eval = F}
+use "nycflights.dta"
+summarize dep_delay if dest == "LAX"
+summarize dep_delay if dest == "LAX", detail
+```
+
+We can also use `if` based on multiple criteria. Suppose we are interested in
 flights headed to San Francisco (SFO) in February:
 
 ```{r}
-sfo_feb_flights <- nycflights %>%
-  filter(dest == "SFO", month == 2)
+summarize dep_delay if dest == "SFO" & month == 2
 ```
 
-Note that we can separate the conditions using commas if we want flights that
-are both headed to SFO **and** in February. If we are interested in either
-flights headed to SFO **or** in February we can use the `|` instead of the comma.
+Notice that the ampersand (`&`) operator connects two conditions: (1) `dest == "SFO"` and (2) `month == 2`. This means that the only data are summarized where the destination is "SFO" and the month is 2.  If we are interested in either
+flights headed to SFO **or** in February we can use the `|` instead of the `&`.
 
-1.  Create a new data frame that includes flights headed to SFO in February, 
-    and save this data frame as `sfo_feb_flights`. How many flights 
-    meet these criteria? 
+
+1.  Summarize departure delays for flights headed to DCA in March. How many flights meet these criteria? 
     
-1.  Describe the distribution of the **arrival** delays of these flights using a 
+1.  Describe the distribution of the **arrival** delays of flights headed to DCA     in March using a 
     histogram and appropriate summary statistics. **Hint:** The summary 
     statistics you use should depend on the shape of the distribution.
     
 Another useful technique is quickly calculating summary 
-statistics for various groups in your data frame. For example, we can modify the 
-above command using the `group_by` function to get the same summary stats for 
-each origin airport:
+statistics for various groups in your data frame. For example, we can modify the above command using the `bysort` prefix to get the same summary stats for each origin airport for flights headed to SFO in February:
 
 ```{r summary-custom-list-origin}
-sfo_feb_flights %>%
-  group_by(origin) %>%
-  summarise(median_dd = median(dep_delay), iqr_dd = IQR(dep_delay), n_flights = n())
+bysort origin: summarize dep_delay if dest == "SFO" & month == 2
 ```
 
-Here, we first grouped the data by `origin`, and then calculated the summary 
-statistics.
+We use `bysort` to first sort the data by `origin` to ensure that all of the same origin flights are grouped together, and then apply summarize by each origin.
 
-1.  Calculate the median and interquartile range for `arr_delay`s of flights in
-    in the `sfo_feb_flights` data frame, grouped by carrier. Which carrier
+1.  Find the minimum and maximum for `arr_delay` of flights going to     
+    SFO in February, grouped by carrier. Which carrier
     has the most variable arrival delays?
 
 ### Departure delays over months
@@ -266,22 +252,19 @@ NYC airport?
 Let's think about how we would answer this question:
 
 - First, calculate monthly averages for departure delays. With the new language
-we are learning, we need to
-    + `group_by` months, then
-    + `summarise` mean departure delays.
-- Then, we need to `arrange` these average delays in `desc`ending order
+we are learning, we need to use 
+    + `bysort` to obtain summaries by month and
+    + `summarize ` to obtain averages.
+- Then, we need to `sort` the data by delay.
 
 ```{r mean-dep-delay-months}
-nycflights %>%
-  group_by(month) %>%
-  summarise(mean_dd = mean(dep_delay)) %>%
-  arrange(desc(mean_dd))
+bysort month: summarize dep_delay
 ```
 
 1.  Suppose you really dislike departure delays, and you want to schedule 
     your travel in a month that minimizes your potential departure delay leaving 
     NYC. One option is to choose the month with the lowest mean departure delay.
-    Another option is to choose the month with the lowest median departure delay. 
+    Another option is to choose the month with the lowest median departure delay (50% percentile). 
     What are the pros and cons of these two choices?
 
 <!--
@@ -303,67 +286,74 @@ In order to determine which airport has the best on time departure rate,
 we need to 
 
 - first classify each flight as "on time" or "delayed",
-- then group flights by origin airport,
-- then calculate on time departure rates for each origin airport,
-- and finally arrange the airports in descending order for on time departure
-percentage.
+- then calculate on time departure rates for each origin airport by origin airport.
 
 Let's start with classifying each flight as "on time" or "delayed" by
-creating a new variable with the `mutate` function.
+creating a new variable.
 
 ```{r dep-type}
-nycflights <- nycflights %>%
-  mutate(dep_type = ifelse(dep_delay < 5, "on time", "delayed"))
+generate dep_type = 1 if dep_delay < 5
+replace dep_type = 0 if dep_delay >= 5
 ```
 
-The first argument in the `mutate` function is the name of the new variable
-we want to create, in this case `dep_type`. Then if `dep_delay < 5` we classify 
-the flight as `"on time"` and `"delayed"` if not, i.e. if the flight is delayed 
-for 5 or more minutes.
+First, we generate a new variable as we have seen before that is equal to 1 when `dep_delay` is less than 5 minutes.  Then, we have introduced a new command, `replace` that replaces values of `dep_time`.  Using `replace`, `dep_time` is equal to 0 if `dep_delay` is greater than or equal to 5 minutes.
 
-Note that we are also overwriting the `nycflights` data frame with the new 
-version of this data frame that includes the new `dep_type` variable.
-
-We can handle all the remaining steps in one code chunk:
+Then, we wish to calculate on-time departure rates by origin:
 
 ```{r}
-nycflights %>%
-  group_by(origin) %>%
-  summarise(ot_dep_rate = sum(dep_type == "on time") / n()) %>%
-  arrange(desc(ot_dep_rate))
+bysort origin: summarize dep_type
 ```
 
-1.  If you were selecting an airport simply based on on time departure 
+1.  If you were selecting an airport simply based on "on time" departure 
     percentage, which NYC airport would you choose to fly out of?
 
-We can also visualize the distribution of on on time departure rate across 
-the three airports using a segmented bar plot.
+We can also visualize the distribution of on time departure rate across 
+the three airports using a bar plot.
 
 ```{r}
-qplot(x = origin, fill = dep_type, data = nycflights, geom = "bar")
+graph bar, over(dep_type) over(origin)
 ```
+
+
+```{r bardel, eval = T, echo = F, results="hide"}
+use "nycflights.dta"
+generate dep_type = 1 if dep_delay < 5
+replace dep_type = 0 if dep_delay >= 5
+graph bar, over(dep_type) over(origin)
+graph export depbar.png
+```
+
+<img src="depbar.png" alt="Barplot of delays by origin, bin = 15" style="width: 500px;"/>
+
 
 * * *
 
 ## More Practice
 
-1.  Mutate the data frame so that it includes a new variable that contains the 
+1.  Generate a new variable for 
     average speed, `avg_speed` traveled by the plane for each flight (in mph).
     **Hint:** Average speed can be calculated as distance divided by
     number of hours of travel, and note that `air_time` is given in minutes.
     
 1.  Make a scatterplot of `avg_speed` vs. `distance`. Describe the relationship
     between average speed and distance.
-    **Hint:** Use `geom = "point"`.
 
 1.  Replicate the following plot. **Hint:** The data frame plotted only
     contains flights from American Airlines, Delta Airlines, and United
-    Airlines, and the points are `color`ed by `carrier`. Once you replicate
+    Airlines. Once you replicate
     the plot, determine (roughly) what the cutoff point is for departure
     delays where you can still expect to get to your destination on time.
 
-```{r echo=FALSE, eval=TRUE, fig.width=7, fig.height=4}
-dl_aa_ua <- nycflights %>%
-  filter(carrier == "AA" | carrier == "DL" | carrier == "UA")
-qplot(x = dep_delay, y = arr_delay, data = dl_aa_ua, color = carrier)
+```{r echo=FALSE, eval=F}
+scatter arr_delay dep_delay if carrier == "AA" | carrier == "DL" | carrier == "UA"
 ```
+
+```{r scatterdel, eval = T, echo = F, results="hide"}
+use "nycflights.dta"
+generate dep_type = 1 if dep_delay < 5
+replace dep_type = 0 if dep_delay >= 5
+scatter arr_delay dep_delay if carrier == "AA" | carrier == "DL" | carrier == "UA"
+graph export scatterdelay.png
+```
+
+<img src="scatterdelay.png" alt="Scatterplot of arrival against departure delays, bin = 15" style="width: 500px;"/>
