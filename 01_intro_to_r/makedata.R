@@ -10,3 +10,7 @@ write_dta(arbuthnot, "arbuthnot.dta")
 # Present (lab 0)
 data(present)
 write_dta(present, "present.dta")
+
+# Nycflights (lab 1)
+data(nycflights)
+write_dta(nycflights, "nycflights.dta")
