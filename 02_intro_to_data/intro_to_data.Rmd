@@ -10,10 +10,12 @@ output:
 ---
 
 ```{r global-options, include=FALSE}
-# Need to specify path to Stata on local computer
-statapath <- "/Applications/Stata/StataSE.app/Contents/MacOS/StataSE"
+library(statamd)
+statapath = statamd::stata_engine_path()
+write_stata_old('nycflights.dta')
+profile_do(dataset = "nycflights.dta")
 
-knitr::opts_chunk$set(eval = F, engine = "stata", engine.path = statapath, comment = "")
+knitr::opts_chunk$set(eval = FALSE, engine = "stata", engine.path = statapath, comment = "")
 
 library(dplyr)
 library(ggplot2)
@@ -60,12 +62,7 @@ with each row representing an *observation* and each column representing a
 
 The names of the variables appear in the *Variables* window in the top right corner of Stata.  We can also use the `codebook` command alone in Stata to view information about all variables.  Alternatively, we can use `codebook` with a specific variable to view information about one variable.  For example, if we wanted to see information about the months for each flight, we could type:
 
-```{r names, eval = F}
-codebook month
-```
-
-```{r names2, eval = T, echo = F}
-use "nycflights.dta"
+```{r names, eval = TRUE}
 codebook month
 ```
 
@@ -108,12 +105,7 @@ departing flights?
 Let's start by examing the distribution of departure delays of all flights with a 
 histogram.  The function `histogram` in Stata creates a histogram of the variable you select:
 
-```{r hist-dep-delay}
-histogram dep_delay
-```
-
-```{r hist-dep-delay2, eval = T, echo = F, results="hide"}
-use "nycflights.dta"
+```{r hist-dep-delay2, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay
 graph export histdelay.png
 ```
@@ -128,12 +120,7 @@ data is split between the different bins. You can easily define the binwidth you
 want to use by specifying the `bin` option in Stata.
 
 
-```{r hist-dep-delay-bins15a}
-histogram dep_delay, bin(15)
-```
-
-```{r hist-dep-delay-bins15b, eval = T, echo = F, results="hide"}
-use "nycflights.dta"
+```{r hist-dep-delay-bins15b, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay, bin(15)
 graph export histdelay15.png
 ```
@@ -143,12 +130,7 @@ graph export histdelay15.png
 <img src="histdelay15.png" alt="Histogram of delays, bin = 15" style="width: 500px;"/>
 
 
-```{r hist-dep-delay-bins150a}
-histogram dep_delay, bin(150)
-```
-
-```{r hist-dep-delay-bins150b, eval = T, echo = F, results="hide"}
-use "nycflights.dta"
+```{r hist-dep-delay-bins150b, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay, bin(150)
 graph export histdelay150.png
 ```
@@ -161,12 +143,7 @@ revealed in one that are obscured in another?
 If we want to focus only on departure delays of flights headed to Los Angeles, 
 we can use `if` in Stata.
 
-```{r lax-flights-hist}
-histogram dep_delay if dest == "LAX"
-```
-
-```{r lax-flights-hist2, eval = T, echo = F, results="hide"}
-use "nycflights.dta"
+```{r lax-flights-hist, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay if dest == "LAX"
 graph export lax.png
 ```
@@ -193,15 +170,13 @@ analysis are as follows:
 
 We can also obtain numerical summaries for the departure delays using the `summarize` command.
 
-```{r dep-flights-summ, eval = T}
-use "nycflights.dta"
+```{r dep-flights-summ, eval = TRUE}
 summarize dep_delay
 ```
 
 Just as in `histogram`, if we want to summarize only one variable, we place it after the `summarize` command.  We can add the Stata option `detail` to obtain more information:
 
-```{r dep-flights-summ2, eval = T}
-use "nycflights.dta"
+```{r dep-flights-summ2, eval = TRUE}
 summarize dep_delay, detail
 ```
 
@@ -209,7 +184,6 @@ We can also again restrict the summary to only those flights whose destination i
 
 
 ```{r lax-flights-summ, eval = F}
-use "nycflights.dta"
 summarize dep_delay if dest == "LAX"
 summarize dep_delay if dest == "LAX", detail
 ```
@@ -310,13 +284,8 @@ bysort origin: summarize dep_type
 We can also visualize the distribution of on time departure rate across 
 the three airports using a bar plot.
 
-```{r}
-graph bar, over(dep_type) over(origin)
-```
 
-
-```{r bardel, eval = T, echo = F, results="hide"}
-use "nycflights.dta"
+```{r bardel, eval = TRUE, echo = 3, results="hide"}
 generate dep_type = 1 if dep_delay < 5
 replace dep_type = 0 if dep_delay >= 5
 graph bar, over(dep_type) over(origin)
@@ -344,12 +313,8 @@ graph export depbar.png
     the plot, determine (roughly) what the cutoff point is for departure
     delays where you can still expect to get to your destination on time.
 
-```{r echo=FALSE, eval=F}
-scatter arr_delay dep_delay if carrier == "AA" | carrier == "DL" | carrier == "UA"
-```
 
-```{r scatterdel, eval = T, echo = F, results="hide"}
-use "nycflights.dta"
+```{r scatterdel, eval = TRUE, echo = 3, results="hide"}
 generate dep_type = 1 if dep_delay < 5
 replace dep_type = 0 if dep_delay >= 5
 scatter arr_delay dep_delay if carrier == "AA" | carrier == "DL" | carrier == "UA"
@@ -357,3 +322,7 @@ graph export scatterdelay.png
 ```
 
 <img src="scatterdelay.png" alt="Scatterplot of arrival against departure delays, bin = 15" style="width: 500px;"/>
+
+```{r, engine='R', echo=FALSE, message=FALSE, eval = TRUE}
+unlink("profile.do")
+```
