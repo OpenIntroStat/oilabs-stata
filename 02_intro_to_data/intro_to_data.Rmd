@@ -107,7 +107,7 @@ histogram.  The function `histogram` in Stata creates a histogram of the variabl
 
 ```{r hist-dep-delay2, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay
-graph export histdelay.png
+graph export histdelay.png, replace
 ```
 
 
@@ -122,7 +122,7 @@ want to use by specifying the `bin` option in Stata.
 
 ```{r hist-dep-delay-bins15b, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay, bin(15)
-graph export histdelay15.png
+graph export histdelay15.png, replace
 ```
 
 
@@ -132,7 +132,7 @@ graph export histdelay15.png
 
 ```{r hist-dep-delay-bins150b, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay, bin(150)
-graph export histdelay150.png
+graph export histdelay150.png, replace
 ```
 
 <img src="histdelay150.png" alt="Histogram of delays, bin = 150" style="width: 500px;"/>
@@ -145,7 +145,7 @@ we can use `if` in Stata.
 
 ```{r lax-flights-hist, eval = TRUE, echo = 1, results="hide"}
 histogram dep_delay if dest == "LAX"
-graph export lax.png
+graph export lax.png, replace
 ```
 
 <img src="lax.png" alt="Histogram of delays at LAX" style="width: 500px;"/>
@@ -289,7 +289,7 @@ the three airports using a bar plot.
 generate dep_type = 1 if dep_delay < 5
 replace dep_type = 0 if dep_delay >= 5
 graph bar, over(dep_type) over(origin)
-graph export depbar.png
+graph export depbar.png, replace
 ```
 
 <img src="depbar.png" alt="Barplot of delays by origin, bin = 15" style="width: 500px;"/>
@@ -318,11 +318,11 @@ graph export depbar.png
 generate dep_type = 1 if dep_delay < 5
 replace dep_type = 0 if dep_delay >= 5
 scatter arr_delay dep_delay if carrier == "AA" | carrier == "DL" | carrier == "UA"
-graph export scatterdelay.png
+graph export scatterdelay.png, replace
 ```
 
 <img src="scatterdelay.png" alt="Scatterplot of arrival against departure delays, bin = 15" style="width: 500px;"/>
 
-```{r, engine='R', echo=FALSE, message=FALSE, eval = TRUE}
+```{r, engine='R', include = FALSE, eval = TRUE}
 unlink("profile.do")
 ```

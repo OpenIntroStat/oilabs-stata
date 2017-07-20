@@ -184,9 +184,9 @@ codebook girls
 
 In Stata, the `scatter` command gives a simple plot of the number of girls baptized per year.
 
-```{r plot-girls-vs-year2, eval = TRUE, echo = 1}
+```{r plot-girls-vs-year2, eval = TRUE, echo = 1, results = "hide"}
 scatter girls year
-graph export "girls.png"
+graph export "girls.png", replace
 ```
 
 ![Scatterplot of girls over time](girls.png)
@@ -327,6 +327,6 @@ from a lab written by Mark Hansen of UCLA Statistics.
 This lab is meant to provide you with a brief introduction to Stata.  You may find it helpful to use Google to help you find code.  In addition, there is a useful list of resources at <http://www.stata.com/links/resources-for-learning-stata/>.
 
 
-```{r, engine='R', echo=FALSE, message=FALSE, eval = TRUE}
+```{r, engine='R', include = FALSE, eval = TRUE}
 unlink("profile.do")
 ```
