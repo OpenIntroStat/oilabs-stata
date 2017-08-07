@@ -111,13 +111,18 @@ Or choose file -> new -> do file editor from the drop down menu.
 <br>
 
 
-Using either approach, a new window will open that is your do-file.  Save this file to wherever you would like to store your code for this lab.  When you type commands into your do file, they will not automatically run when you press enter.  Highlight the code you wish you run, and click the "do" button on the top right of the file to send your code to Stata.
+Using either approach, a new window will open that is your do-file.  Save this file to wherever you would like to store your code for this lab.  
+
+When you type commands into your do-file, they will not automatically run when you press enter.  Highlight the code you wish you run in your do-file, and click the "do" button on the top right to send your code to Stata.
 
 
 ![Do-file](more/stata-dofile-do.png)
 <br>
 
-Once you highlight and click the "do" button, the Stata results window should show the command.  
+Once you highlight and click the "do" button, the Stata results window will show the command and any output.  You can also use a keyboard shortcut to run code in your do-file:
+
+- Windows: Type ctrl-D (control button-letter D)
+- Mac: Type command-shift-D  
 
 
 
@@ -125,19 +130,13 @@ Once you highlight and click the "do" button, the Stata results window should sh
 
 ### Loading data into Stata
 
-In this lab, we will use a datafile called arbuthnot.dta. Datafiles with the extension ".dta" are Stata datafiles, and they are the easiest to read into Stata.  There are three options:
+In this lab, we will use a datafile called arbuthnot.dta. Datafiles with the extension ".dta" are Stata datafiles, and they are the easiest to read into Stata.  All of the following assume that Stata is available on your computer.  There are three options for reading .dta datafiles into your computer:
 
 - Double click the dataset in your file folder on your computer.
 - Choose file -> open and select the file folder on your computer.
 - Using Stata code in your do-file.
 
-We will focus on the last option because it is "reproducible" in the sense that others can see from your do-file what dataset you have loaded.  First, open up a new do-file using the instructions above and save it to a folder called "Lab-dofiles" within your *OpenIntroLabs* folder.  From now on, we assume that you type the given code into your do-file.  
-
-To run code from your do-file in Stata, you can highlight the code you would like to run and:
-
-- Select the "Do" button on the right-hand side of the screen.
-- Windows: Type ctrl-D (control button-letter D)
-- Mac: Type command-shift-D
+We will focus on the last option because it is "reproducible" in the sense that others can see from your do-file what dataset you have loaded.  First, open up a new do-file using the instructions above and save it to a folder called "Lab-dofiles" within your *OpenIntroLabs* folder.  From now on, we assume that you type the given code into your do-file and save it there.  
 
 Make sure your working directory is set to your OpenIntroLabs folder, and that the dataset "arbuthnot.dta" is within this folder.  Then enter the following into your do-file and run the code: 
 
@@ -228,7 +227,7 @@ display 5218 + 4683
 
 
 Alternatively, we could create a new variable corresponding to the sum of boys and girls using the `generate` command:
-.
+
 
 ```{r calc-total-bapt-vars}
 generate total = boys + girls
@@ -253,7 +252,7 @@ or we can add a new variable that contains all the ratios by using the command `
 generate ratio = boys / girls
 ```
 
-We can also compute the proportion of newborns that are boys in 1629
+We can also compute the proportion of newborns that are boys in 1629:
 
 ```{r calc-prop-boys-numbers}
 display 5218 / (5218 + 4683)
@@ -288,7 +287,7 @@ did not (the answer may surprise you).
 
 In the previous few pages, you recreated some of the displays and preliminary 
 analysis of Arbuthnot's baptism data. Your assignment involves repeating these 
-steps, but for present day birth records in the United States. First, save the "present.dta" dataset to your OpenIntroLabs folder.  Then you will need to `clear` the current dataset from Stata using clear.  At this stage, you should have saved all your code in a do-file, and you do not need to save your datafile.  Load the present day data with the following command.
+steps, but for present day birth records in the United States. First, save the "present.dta" dataset to your OpenIntroLabs folder.  Then you will need to clear the current dataset from Stata using the command `clear`.  At this stage, you should have saved all your code in a do-file, and you do not need to save your datafile.  Load the present day data with the following command.
 
 
 ```{r load-present-data, eval = F}
@@ -308,7 +307,7 @@ The data are stored in a data frame called `present`.
 6.  Make a plot that displays the proportion of boys born over time. What do you see? 
     Does Arbuthnot's observation about boys being born in greater proportion than girls 
     hold up in the U.S.? Include the plot in your response. *Hint:* You should be
-    able to reuse your code from Ex 3 above, just replace the dataframe name.
+    able to reuse your code from Exercise 3 above, just replace the dataframe name.
 
 7.  In what year did we see the most total number of births in the U.S.? *Hint:*
     First calculate the totals and save it as a new variable. Then, sort your
@@ -324,7 +323,7 @@ by bringing up the help file using the command `?present`.
 <div id="license">
 This is a product of OpenIntro that is released under a 
 [Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0). 
-This lab was adapted for Stata by Jenna R. Krall and adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
+This lab was adapted for Stata by Jenna R. Krall and John Muschelli and adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel
 from a lab written by Mark Hansen of UCLA Statistics.
 </div>
 
