@@ -12,14 +12,16 @@ output:
 In this lab we'll investigate the probability distribution that is most central
 to statistics: the normal distribution.  If we are confident that our data are 
 nearly normal, that opens the door to many powerful statistical methods.  Here 
-we'll use the graphical tools of R to assess the normality of our data and also 
+we'll use the graphical tools of Stata to assess the normality of our data and also 
 learn how to generate random numbers from a normal distribution.
 
 ## The Data
 
-This week we'll be working with measurements of body dimensions.  This data set 
+This week we'll be working with measurements of body dimensions from the dataset "bdims.dta".  Read your dataset into Stata using the methods described in the "Introduction to Stata" lab.
+
+Once you have read in your dataset, open up the Data Browser in Stata to view the data.  This data set 
 contains measurements from 247 men and 260 women, most of whom were considered 
-healthy young adults. Let's take a quick peek at the first few rows of the data.
+healthy young adults. 
 
 ```{r global-options, include=FALSE}
 library(dplyr)
@@ -40,21 +42,12 @@ knitr::opts_chunk$set(eval = FALSE, engine = "stata",
                       engine.path = statapath, comment = "")
 ```
 
-```{r header, eval = TRUE}
-list in 1/5
-```
 
 You'll see that for every observation we have 25 measurements, many of which are
-either diameters or girths.  
+either diameters or girths.  We'll be focusing on just three columns to get started: weight in kg (`wgt`), 
+height in cm (`hgt`), and `sex` (1 indicates female, 2 indicates male). 
 
-```{r help-bdims, eval = TRUE}
-* number of rows only
-count 
-describe, short
-```
-
-We'll be focusing on just three columns to get started: weight in kg (`wgt`), 
-height in cm (`hgt`), and `sex` (`m` indicates male, `f` indicates female). We see
+<!-- We see
 that the variable `sex` is labeled with the label `sex`:
 
 ```{r dsex, eval = TRUE}
@@ -78,6 +71,8 @@ count if sex == 1
 count if sex == 2
 ```
 
+
+
 If we don't remember which category is `1` or `2`, but remebmer the labels, we can
 subset based on the label itself:
 
@@ -85,6 +80,10 @@ subset based on the label itself:
 count if sex == "f":sex
 count if sex == "m":sex
 ```
+
+
+
+
 
 In order to doing thing separately, we can `preserve` the data, which makes a type of
 checkpoint.  We can then manipulate the data, dropping variables or rows, and performing 
@@ -104,6 +103,9 @@ restore
 count
 ```
 
+-->
+
+
 1.  Make a plot (or plots) to visualize the distributions of men's and women's heights.  
     How do their centers, shapes, and spreads compare?
 
@@ -116,18 +118,28 @@ distribution.
 To see how accurate that description is, we can plot a normal distribution curve 
 on top of a histogram to see how closely the data follow a normal distribution. 
 This normal curve should have the same mean and standard deviation as the data. 
-We'll be working with women's heights, so let's store them as a separate object 
-and then calculate some statistics that will be referenced later. 
+We'll be working with women's heights, so let's subset our data using the command `keep`.  We can always use the command `use "bdims.dta"` to go back to the original dataset.
 
 ```{r female-hgt-mean-sd, eval = TRUE}
-preserve
-keep if sex == "f":sex
-summ hgt, d
-restore
+keep if sex == 1
 ```
 
-Next we make a density histogram to use as the backdrop and use the `lines` 
-function to overlay a normal probability curve. The difference between a 
+Recall that we can display a histogram of the heights of females using the `histogram` command:
+
+```{r hist-female, eval = FALSE}
+histogram hgt
+```
+
+Instead of plotting a *frequency* histogram, the default in Stata, we can plot a *density* histogram:
+
+```{r hist-female-den, eval = TRUE, echo = 1, results = "hide"}
+histogram hgt, density
+graph export hgt.png, replace
+```
+
+![](hgt.png)
+
+The difference between a 
 frequency histogram and a density histogram is that while in a frequency 
 histogram the *heights* of the bars add up to the total number of observations, 
 in a density histogram the *areas* of the bars add up to 1. The area of each bar
@@ -136,27 +148,21 @@ density histogram allows us to properly overlay a normal distribution curve over
 the histogram since the curve is a normal probability density function that also
 has area under the curve of 1. Frequency and density histograms both display the
 same exact shape; they only differ in their y-axis. You can verify this by
-comparing the frequency histogram you constructed earlier and the density
-histogram created by the commands below.
+comparing the frequency histogram and the density
+histogram.
 
-```{r hist-height, eval = TRUE, echo = c(1:3, 5)}
-preserve
-keep if sex == "f":sex
-hist hgt, normal density
-graph export hgt.png, replace
-restore
+
+We can add a normal curve to this histogram by using the option `normal`.  
+
+```{r hist-height, eval = TRUE, echo = 1, results = "hide"}
+histogram hgt, normal density
+graph export hgtnorm.png, replace
 ```
 
-![Heights](hgt.png)
+![](hgtnorm.png)
 
-After initializing a blank plot with the first command, the `ggplot2` package
-allows us to add additional layers. The first layer is a density histogram. The
-second layer is a statistical function -- the density of the normal curve, `dnorm`.
-We specify that we want the curve to have the same mean and standard deviation 
-as the column of female heights. The argument `col` simply sets the color for 
-the line to be drawn. If we left it out, the line would be drawn in black.
 
-2.  Based on the this plot, does it appear that the data follow a nearly normal 
+2.  Based on this plot, does it appear that the data follow a nearly normal 
     distribution?
 
 
@@ -168,231 +174,151 @@ close the histogram is to the curve. An alternative approach involves
 constructing a normal probability plot, also called a normal Q-Q plot for 
 "quantile-quantile".
 
-```{r qq, eval = TRUE, echo = c(1:3, 5)}
-preserve
-keep if sex == "f":sex
+```{r qq, eval = TRUE, echo = 1, results = "hide"}
 qnorm hgt
 graph export qqhgt.png, replace
-restore
 ```
 
-![Heights](qqhgt.png)
+![](qqhgt.png)
 
 
 
-<!-- The x-axis values correspond to the quantiles of a theoretically normal curve  -->
-<!-- with mean 0 and standard deviation 1 (i.e., the standard normal distribution).  The  -->
-<!-- y-axis values correspond to the quantiles of the original unstandardized sample  -->
-<!-- data. However, even if we were to standardize the sample data values, the Q-Q -->
-<!-- plot would look identical. A data set that is nearly normal will result in a -->
-<!-- probability plot where the points closely follow a diagonal line.  Any deviations from -->
-<!-- normality leads to deviations of these points from that line. -->
+The x-axis values correspond to the quantiles of a theoretically normal curve with mean 0 and standard deviation 1 (i.e., the standard normal distribution).  The y-axis values correspond to the quantiles of the original unstandardized sample data. However, even if we were to standardize the sample data values, the Q-Q plot would look identical. A data set that is nearly normal will result in a probability plot where the points closely follow a diagonal line.  Any deviations from normality leads to deviations of these points from that line. 
 
-<!-- The plot for female heights shows points that tend to follow the line but with -->
-<!-- some errant points towards the tails.  We're left with the same problem that we -->
-<!-- encountered with the histogram above: how close is close enough? -->
+The plot for female heights shows points that tend to follow the line but with some errant points towards the tails.  We're left with the same problem that we encountered with the histogram above: how close is close enough? 
 
-<!-- A useful way to address this question is to rephrase it as: what do probability  -->
-<!-- plots look like for data that I *know* came from a normal distribution?  We can  -->
-<!-- answer this by simulating data from a normal distribution using `rnorm`. -->
+A useful way to address this question is to rephrase it as: what do probability plots look like for data that I *know* came from a normal distribution?  We can answer this by simulating data from a normal distribution.  First, we need to find the mean and standard deviation of our heights:
 
-<!-- ```{r sim-norm} -->
-<!-- sim_norm <- rnorm(n = nrow(fdims), mean = fhgtmean, sd = fhgtsd) -->
-<!-- ``` -->
-
-<!-- The first argument indicates how many numbers you'd like to generate, which we  -->
-<!-- specify to be the same number of heights in the `fdims` data set using the  -->
-<!-- `nrow()` function.  The last two arguments determine the mean and standard  -->
-<!-- deviation of the normal distribution from which the simulated sample will be  -->
-<!-- generated.  We can take a look at the shape of our simulated data set, `sim_norm`,  -->
-<!-- as well as its normal probability plot. -->
-
-<!-- 3.  Make a normal probability plot of `sim_norm`.  Do all of the points fall on  -->
-<!--     the line?  How does this plot compare to the probability plot for the real  -->
-<!--     data? (Since `sim_norm` is not a dataframe, it can be put directly into the  -->
-<!--     `sample` argument and the `data` argument can be dropped.) -->
-
-<!-- Even better than comparing the original plot to a single plot generated from a  -->
-<!-- normal distribution is to compare it to many more plots using the following  -->
-<!-- function. It shows the Q-Q plot corresponding to the original data in the top -->
-<!-- left corner, and the Q-Q plots of 8 different simulated normal data.  It may be -->
-<!-- helpful to click the zoom button in the plot window. -->
-
-<!-- ```{r qqnormsim} -->
-<!-- qqnormsim(sample = hgt, data = fdims) -->
-<!-- ``` -->
-
-<!-- 4.  Does the normal probability plot for female heights look similar to the plots  -->
-<!--     created for the simulated data?  That is, do the plots provide evidence that the -->
-<!--     female heights are nearly normal? -->
-
-<!-- 5.  Using the same technique, determine whether or not female weights appear to  -->
-<!--     come from a normal distribution. -->
-
-<!-- ## Normal probabilities -->
-
-<!-- Okay, so now you have a slew of tools to judge whether or not a variable is  -->
-<!-- normally distributed.  Why should we care? -->
-
-<!-- It turns out that statisticians know a lot about the normal distribution.  Once  -->
-<!-- we decide that a random variable is approximately normal, we can answer all  -->
-<!-- sorts of questions about that variable related to probability.  Take, for  -->
-<!-- example, the question of, "What is the probability that a randomly chosen young  -->
-<!-- adult female is taller than 6 feet (about 182 cm)?" (The study that published -->
-<!-- this data set is clear to point out that the sample was not random and therefore  -->
-<!-- inference to a general population is not suggested.  We do so here only as an -->
-<!-- exercise.) -->
-
-<!-- If we assume that female heights are normally distributed (a very close  -->
-<!-- approximation is also okay), we can find this probability by calculating a Z  -->
-<!-- score and consulting a Z table (also called a normal probability table).  In R,  -->
-<!-- this is done in one step with the function `pnorm()`. -->
-
-<!-- ```{r pnorm} -->
-<!-- 1 - pnorm(q = 182, mean = fhgtmean, sd = fhgtsd) -->
-<!-- ``` -->
-
-<!-- Note that the function `pnorm()` gives the area under the normal curve below a  -->
-<!-- given value, `q`, with a given mean and standard deviation.  Since we're  -->
-<!-- interested in the probability that someone is taller than 182 cm, we have to  -->
-<!-- take one minus that probability. -->
-
-<!-- Assuming a normal distribution has allowed us to calculate a theoretical  -->
-<!-- probability.  If we want to calculate the probability empirically, we simply  -->
-<!-- need to determine how many observations fall above 182 then divide this number  -->
-<!-- by the total sample size. -->
-
-<!-- ```{r probability} -->
-<!-- fdims %>%  -->
-<!--   filter(hgt > 182) %>% -->
-<!--   summarise(percent = n() / nrow(fdims)) -->
-<!-- ``` -->
-
-<!-- Although the probabilities are not exactly the same, they are reasonably close.  -->
-<!-- The closer that your distribution is to being normal, the more accurate the  -->
-<!-- theoretical probabilities will be. -->
-
-<!-- 6.  Write out two probability questions that you would like to answer; one  -->
-<!--     regarding female heights and one regarding female weights.  Calculate  -->
-<!--     those probabilities using both the theoretical normal distribution as well  -->
-<!--     as the empirical distribution (four probabilities in all).  Which variable, -->
-<!--     height or weight, had a closer agreement between the two methods? -->
-
-<!-- * * * -->
-
-<!-- ## More Practice -->
-
-<!-- 7.  Now let's consider some of the other variables in the body dimensions data  -->
-<!--     set.  Using the figures at the end of the exercises, match the histogram to  -->
-<!--     its normal probability plot.  All of the variables have been standardized  -->
-<!--     (first subtract the mean, then divide by the standard deviation), so the  -->
-<!--     units won't be of any help.  If you are uncertain based on these figures,  -->
-<!--     generate the plots in R to check. -->
-
-<!--     **a.** The histogram for female biiliac (pelvic) diameter (`bii.di`) belongs -->
-<!--     to normal probability plot letter ____. -->
-
-<!--     **b.** The histogram for female elbow diameter (`elb.di`) belongs to normal  -->
-<!--     probability plot letter ____. -->
-
-<!--     **c.** The histogram for general age (`age`) belongs to normal probability  -->
-<!--     plot letter ____. -->
-
-<!--     **d.** The histogram for female chest depth (`che.de`) belongs to normal  -->
-<!--     probability plot letter ____. -->
-
-<!-- 8.  Note that normal probability plots C and D have a slight stepwise pattern.   -->
-<!--     Why do you think this is the case? -->
-
-<!-- 9.  As you can see, normal probability plots can be used both to assess  -->
-<!--     normality and visualize skewness.  Make a normal probability plot for female  -->
-<!--     knee diameter (`kne.di`).  Based on this normal probability plot, is this  -->
-<!--     variable left skewed, symmetric, or right skewed?  Use a histogram to confirm  -->
-<!--     your findings. -->
+```{r, eval = TRUE}
+summarize hgt
+```
 
 
-<!-- ```{r hists-and-qqs, echo=FALSE, eval=FALSE} -->
-<!-- sdata <- fdims %>% -->
-<!--   mutate(sdata = (bii.di - mean(bii.di))/sd(bii.di)) %>% -->
-<!--   select(sdata) -->
-<!-- p1 <- ggplot(sdata, aes(x = sdata)) + -->
-<!--   geom_histogram() +  -->
-<!--   ggtitle("Histogram for female bii.di") -->
-<!-- p4 <- qplot(sample = sdata, data = sdata, stat = "qq") + -->
-<!--   ggtitle("Normal QQ plot B") -->
-<!-- sdata <- fdims %>% -->
-<!--   mutate(sdata = (elb.di - mean(elb.di))/sd(elb.di)) %>% -->
-<!--   select(sdata) -->
-<!-- p3 <- ggplot(sdata, aes(x = sdata)) + -->
-<!--   geom_histogram() +  -->
-<!--   ggtitle("Histogram for female elb.di") -->
-<!-- p6 <- qplot(sample = sdata, data = sdata, stat = "qq") + -->
-<!--   ggtitle("Normal QQ plot C") -->
-<!-- sdata <- bdims %>% -->
-<!--   mutate(sdata = (age - mean(age))/sd(age)) %>% -->
-<!--   select(sdata) -->
-<!-- p5 <- ggplot(sdata, aes(x = sdata)) + -->
-<!--   geom_histogram() +  -->
-<!--   ggtitle("Histogram for general age") -->
-<!-- p8 <- qplot(sample = sdata, data = sdata, stat = "qq") + -->
-<!--   ggtitle("Normal QQ plot D") -->
-<!-- sdata <- fdims %>% -->
-<!--   mutate(sdata = (che.de - mean(che.de))/sd(che.de)) %>% -->
-<!--   select(sdata) -->
-<!-- p7 <- ggplot(sdata, aes(x = sdata)) + -->
-<!--   geom_histogram() +  -->
-<!--   ggtitle("Histogram for general age") -->
-<!-- p2 <- qplot(sample = sdata, data = sdata, stat = "qq") + -->
-<!--   ggtitle("Normal QQ plot A") -->
-
-<!-- multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) { -->
-<!--   library(grid) -->
-
-<!--   # Make a list from the ... arguments and plotlist -->
-<!--   plots <- c(list(...), plotlist) -->
-
-<!--   numPlots = length(plots) -->
-
-<!--   # If layout is NULL, then use 'cols' to determine layout -->
-<!--   if (is.null(layout)) { -->
-<!--     # Make the panel -->
-<!--     # ncol: Number of columns of plots -->
-<!--     # nrow: Number of rows needed, calculated from # of cols -->
-<!--     layout <- matrix(seq(1, cols * ceiling(numPlots/cols)), -->
-<!--                     ncol = cols, nrow = ceiling(numPlots/cols)) -->
-<!--   } -->
-
-<!--  if (numPlots==1) { -->
-<!--     print(plots[[1]]) -->
-
-<!--   } else { -->
-<!--     # Set up the page -->
-<!--     grid.newpage() -->
-<!--     pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout)))) -->
-
-<!--     # Make each plot, in the correct location -->
-<!--     for (i in 1:numPlots) { -->
-<!--       # Get the i,j matrix positions of the regions that contain this subplot -->
-<!--       matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE)) -->
-
-<!--       print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row, -->
-<!--                                       layout.pos.col = matchidx$col)) -->
-<!--     } -->
-<!--   } -->
-<!-- } -->
-
-<!-- png("more/histQQmatch.png", height = 1600, width = 1200, res = 150) -->
-<!-- multiplot(p1, p2, p3, p4, p5, p6, p7, p8, -->
-<!--           layout = matrix(1:8, ncol = 2, byrow = TRUE)) -->
-<!-- dev.off() -->
-<!-- ``` -->
+Then, using this mean and standard deviation, we can simulate normal data with the same mean and standard deviation using `rnormal`.
 
 
-<!-- ![](more/histQQmatchgg.png) -->
+```{r, eval = TRUE, results = "hide"}
+generate simnorm = rnormal(164.9, 6.5)
+```
 
-<!-- <div id="license"> -->
-<!-- This is a product of OpenIntro that is released under a  -->
-<!-- [Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0).  -->
-<!-- This lab was adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel -->
-<!-- from a lab written by Mark Hansen of UCLA Statistics. -->
-<!-- </div> -->
+
+We can take a look at the shape of our simulated data as well as its normal probability plot. 
+
+3.  Make a normal probability plot of `simnorm`.  Do all of the points fall on the line?  How does this plot compare to the probability plot for the real data?
+
+4.  Does the normal probability plot for female heights look similar to the plots created for the simulated data?  That is, do the plots provide evidence that the female heights are nearly normal? 
+5.  Using the same technique, determine whether or not female weights appear to come from a normal distribution. 
+
+## Normal probabilities
+
+Okay, so now you have a slew of tools to judge whether or not a variable is normally distributed.  Why should we care?
+
+It turns out that statisticians know a lot about the normal distribution.  Once we decide that a random variable is approximately normal, we can answer all sorts of questions about that variable related to probability.  Take, for example, the question of, "What is the probability that a randomly chosen young adult female is taller than 6 feet (about 182 cm)?" (The study that published this data set is clear to point out that the sample was not random and thereforeinference to a general population is not suggested.  We do so here only as an exercise.)
+
+If we assume that female heights are normally distributed (a very close approximation is also okay), we can find this probability by calculating a Z-score and consulting a Z table (also called a normal probability table).  In Stata, this is done in two steps.  First, we compute the Z-score in the same way discussed in the textbook, using Stata as a calculator.  
+
+```{r zscore, eval = TRUE}
+display (182 - 164.9) / 6.5
+```
+
+Then, with the function `normal()`, we can find the *left-tail* probability, which corresponds to an adult female being *smaller* than 182 cm:
+
+
+```{r prob, eval = TRUE}
+display normal(2.63)
+
+```
+
+If we want the *right-tail* probability for an adult female being taller than 182 cm, we take:
+
+```{r probinv, eval = TRUE}
+display 1 - normal(2.63)
+```
+
+
+
+
+Assuming a normal distribution has allowed us to calculate a theoretical probability.  If we want to calculate the probability empirically, we simply   need to determine how many observations fall above 182 then divide this number by the total sample size. 
+
+```{r count}
+count if hgt > 182
+display 1 / 260
+```
+
+Although the probabilities are not exactly the same, they are reasonably close.  The closer that your distribution is to being normal, the more accurate the theoretical probabilities will be.
+
+6.  Write out two probability questions that you would like to answer; one regarding female heights and one regarding female weights.  Calculate those probabilities using both the theoretical normal distribution as well as the empirical distribution (four probabilities in all).  Which variable, height or weight, had a closer agreement between the two methods? 
+
+* * * 
+
+## More Practice
+
+7.  Now let's consider some of the other variables in the body dimensions data set.  Using the figures at the end of the exercises, match the histogram to its normal probability plot.  All of the variables have been standardized  (first subtract the mean, then divide by the standard deviation), so the units won't be of any help.  If you are uncertain based on these figures, generate the plots in Stata to check. 
+
+**a.** The histogram for female biiliac (pelvic) diameter (`bii_di`) belongs to normal probability plot letter ____. 
+
+**b.** The histogram for female elbow diameter (`elb_di`) belongs to normal probability plot letter ____. 
+
+**c.** The histogram for general age (`age`) belongs to normal probability plot letter ____. 
+
+**d.** The histogram for female chest depth (`che_de`) belongs to normal probability plot letter ____. 
+
+8.  Note that normal probability plots c. and d. have a slight stepwise pattern. Why do you think this is the case? 
+
+9.  As you can see, normal probability plots can be used both to assess normality and visualize skewness.  Make a normal probability plot for female knee diameter (`kne_di`).  Based on this normal probability plot, is this variable left skewed, symmetric, or right skewed?  Use a histogram to confirm your findings. 
+
+```{r hists-and-qqs, echo = FALSE, eval = TRUE, results = "hide"}
+summarize bii_di
+generate sbii = (bii_di - 27.58154) / 2.307476 
+summarize elb_di
+generate selb = (elb_di - 12.36692) / .8363728
+summarize age
+generate sage = (age -  28.76923) / 8.85319 
+summarize che_de
+generate sche = (che_de -  17.72462) / 1.832064 
+histogram sbii, title("Histogram for female bii_di")
+graph export histbii.png, replace
+
+histogram selb, title("Histogram for female elb_di")
+graph export histelb.png, replace
+
+histogram sage, title("Histogram for female general age")
+graph export histage.png, replace
+
+histogram sche, title("Histogram for female che_de")
+graph export histche.png, replace
+
+qnorm sbii, ytitle("") title("Normal QQ plot B")
+graph export qqb.png, replace
+
+qnorm selb, ytitle("") title("Normal QQ plot C")
+graph export qqc.png, replace
+
+qnorm sage, ytitle("") title("Normal QQ plot D")
+graph export qqd.png, replace
+
+qnorm sche, ytitle("") title("Normal QQ plot A")
+graph export qqa.png, replace
+
+```
+
+
+![](histbii.png)
+
+![](histelb.png)
+
+![](histage.png)
+
+![](histche.png)
+
+![](qqa.png)
+
+![](qqb.png)
+
+![](qqc.png)
+
+![](qqd.png)
+
+
+<div id="license"> This is a product of OpenIntro that is released under a [Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0).  This lab was adapted for Stata by Jenna R. Krall and John Muschelli and adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel  from a lab written by Mark Hansen of UCLA Statistics.
+</div>
