@@ -195,8 +195,8 @@ flights headed to San Francisco (SFO) in February:
 summarize dep_delay if dest == "SFO" & month == 2
 ```
 
-Notice that the ampersand (`&`) operator connects two conditions: (1) `dest == "SFO"` and (2) `month == 2`. This means that the only data are summarized where the destination is "SFO" and the month is 2.  If we are interested in either
-flights headed to SFO **or** in February we can use the `|` instead of the `&`.
+Notice that the ampersand (`&`) operator connects two conditions: (1) `dest == "SFO"` and (2) `month == 2`. This means that the only data are summarized where the destination is "SFO" **AND** the month is 2.  If we are interested in either
+flights headed to SFO **OR** in February we use the pipe operator (`|`), which indicates "or", instead of the ampersand (`&`), which indicates "and".
 
 
 1.  Summarize departure delays for flights headed to DCA in March. How many flights meet these criteria? 
@@ -212,7 +212,7 @@ statistics for various groups in your data frame. For example, we can modify the
 bysort origin: summarize dep_delay if dest == "SFO" & month == 2
 ```
 
-We use `bysort` to first sort the data by `origin` to ensure that all of the same origin flights are grouped together, and then apply summarize by each origin.
+We use `bysort` to first sort the data by `origin` to ensure that all of the same origin flights are grouped together, and then apply summarize by each origin airport.
 
 1.  Find the minimum and maximum for `arr_delay` of flights going to     
     SFO in February, grouped by carrier. Which carrier
@@ -252,8 +252,8 @@ Which month has the highest average departure delay from an NYC airport? What
 
 Suppose you will be flying out of NYC and want to know which of the 
 three major NYC airports has the best on time departure rate of departing flights. 
-Suppose also that for you a flight that is delayed for less than 5 minutes is 
-basically "on time". You consider any flight delayed for 5 minutes of more to be 
+Suppose also that, for you, a flight that is delayed for less than 5 minutes is 
+basically "on time". You consider any flight delayed for 5 minutes or more to be 
 "delayed".
 
 In order to determine which airport has the best on time departure rate, 
@@ -282,7 +282,7 @@ bysort origin: summarize dep_type
     percentage, which NYC airport would you choose to fly out of?
 
 We can also visualize the distribution of on time departure rate across 
-the three airports using a bar plot.
+the three airports using a bar plot.  How is this plot affected by the *number* of flights that depart from each of the three airports?
 
 
 ```{r bardel, eval = TRUE, echo = 3, results="hide"}
@@ -314,7 +314,7 @@ graph export depbar.png, replace
     delays where you can still expect to get to your destination on time.
 
 
-```{r scatterdel, eval = TRUE, echo = 3, results="hide"}
+```{r scatterdel, eval = TRUE, echo = FALSE, results="hide"}
 generate dep_type = 1 if dep_delay < 5
 replace dep_type = 0 if dep_delay >= 5
 scatter arr_delay dep_delay if carrier == "AA" | carrier == "DL" | carrier == "UA"
