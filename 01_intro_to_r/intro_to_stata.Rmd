@@ -14,15 +14,18 @@ output:
 ---
 
 ```{r global_options, include=FALSE}
-# Need to specify path to Stata on local computer
-statapath <- "/Applications/Stata/StataSE.app/Contents/MacOS/StataSE"
+library(statamd)
+statapath = statamd::stata_engine_path()
+write_stata_old('arbuthnot.dta')
+profile_do(dataset = "arbuthnot.dta")
 
-knitr::opts_chunk$set(eval = F, engine = "stata", engine.path = statapath, comment = "")
+knitr::opts_chunk$set(eval = FALSE, engine = "stata", engine.path = statapath, comment = "")
 
 library(dplyr)
 library(ggplot2)
 #library(oilabs)
 ```
+
 
 
 ## The Stata Interface
@@ -164,15 +167,13 @@ Here, you can see the three variables again: year, boys, and girls.  Each row re
 
 Going back to your Stata do-file, the command `codebook` provides a summary for each variable in your dataset.  This is not recommended for variables with many (hundreds of variables), but will be sufficient here.  
 
-```{r, eval = F}
-use "arbuthnot.dta"
+```{r, eval = FALSE}
 codebook
 ```
 
 If we would like to only look at information about one variable, we could follow `codebook` with the variable of interest, e.g. girls.
 
-```{r, eval = T}
-use "arbuthnot.dta"
+```{r, eval = TRUE}
 codebook girls
 ```
 
@@ -183,15 +184,9 @@ codebook girls
 
 In Stata, the `scatter` command gives a simple plot of the number of girls baptized per year.
 
-```{r plot-girls-vs-year, eval = F}
-use "arbuthnot.dta"
+```{r plot-girls-vs-year2, eval = TRUE, echo = 1, results = "hide"}
 scatter girls year
-```
-
-```{r plot-girls-vs-year2, eval = T, echo = F, results="hide"}
-use "arbuthnot.dta"
-scatter girls year
-graph export girls.png
+graph export "girls.png", replace
 ```
 
 ![Scatterplot of girls over time](girls.png)
@@ -228,14 +223,12 @@ Alternatively, we could create a new variable corresponding to the sum of boys a
 .
 
 ```{r calc-total-bapt-vars}
-use "arbuthnot.dta"
 generate total = boys + girls
 ```
 
 After running the `generate` command, open up the *Data Browser* and verify the new variable, total, is added to the dataset.  We can make a plot of the total number of baptisms per year with the command:
 
 ```{r plot-total-vs-year}
-use "arbuthnot.dta"
 scatter total year
 ```
 
@@ -249,7 +242,6 @@ display 5218 / 4683
 or we can add a new variable that contains all the ratios by using the command `generate`:
 
 ```{r calc-prop-boys-to-girls-vars}
-use "arbuthnot.dta"
 generate ratio = boys / girls
 ```
 
@@ -262,7 +254,6 @@ display 5218 / (5218 + 4683)
 or this may also be computed for all years simultaneously and appended to the dataset:
 
 ```{r calc-prop-boys-vars}
-use "arbuthnot.dta"
 generate boyratio = boys / total
 ```
 
@@ -276,7 +267,6 @@ division, you can ask Stata to make comparisons like greater than, `>`, less tha
 year with the expression
 
 ```{r boys-more-than-girls}
-use "arbuthnot.dta"
 generate moreboys = boys > girls
 ```
 
@@ -335,3 +325,8 @@ from a lab written by Mark Hansen of UCLA Statistics.
 ## Resources for learning Stata
 
 This lab is meant to provide you with a brief introduction to Stata.  You may find it helpful to use Google to help you find code.  In addition, there is a useful list of resources at <http://www.stata.com/links/resources-for-learning-stata/>.
+
+
+```{r, engine='R', include = FALSE, eval = TRUE}
+unlink("profile.do")
+```
