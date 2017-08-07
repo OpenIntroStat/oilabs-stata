@@ -111,7 +111,15 @@ Or choose file -> new -> do file editor from the drop down menu.
 <br>
 
 
-Using either approach, a new window will open that is your do-file.  Save this file to wherever you would like to store your code for this lab.
+Using either approach, a new window will open that is your do-file.  Save this file to wherever you would like to store your code for this lab.  When you type commands into your do file, they will not automatically run when you press enter.  Highlight the code you wish you run, and click the "do" button on the top right of the file to send your code to Stata.
+
+
+![Do-file](more/stata-dofile-do.png)
+<br>
+
+Once you highlight and click the "do" button, the Stata results window should show the command.  
+
+
 
 ## Dr. Arbuthnot's Baptism Records
 
