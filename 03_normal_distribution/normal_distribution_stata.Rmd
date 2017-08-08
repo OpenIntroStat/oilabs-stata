@@ -118,7 +118,7 @@ distribution.
 To see how accurate that description is, we can plot a normal distribution curve 
 on top of a histogram to see how closely the data follow a normal distribution. 
 This normal curve should have the same mean and standard deviation as the data. 
-We'll be working with women's heights, so let's subset our data using the command `keep`.  We can always use the command `use "bdims.dta"` to go back to the original dataset.
+We'll be working with women's heights, so let's subset our data using the command `keep`.  We can always use the command `use "bdims.dta"` to go back to the original dataset of both females and males.
 
 ```{r female-hgt-mean-sd, eval = TRUE}
 keep if sex == 1
@@ -126,13 +126,15 @@ keep if sex == 1
 
 Recall that we can display a histogram of the heights of females using the `histogram` command:
 
-```{r hist-female, eval = FALSE}
+```{r hist-female, eval = FALSE, echo = 2}
+keep if sex == 1
 histogram hgt
 ```
 
 Instead of plotting a *frequency* histogram, the default in Stata, we can plot a *density* histogram:
 
-```{r hist-female-den, eval = TRUE, echo = 1, results = "hide"}
+```{r hist-female-den, eval = TRUE, echo = 2, results = "hide"}
+keep if sex == 1
 histogram hgt, density
 graph export hgt.png, replace
 ```
@@ -143,7 +145,7 @@ The difference between a
 frequency histogram and a density histogram is that while in a frequency 
 histogram the *heights* of the bars add up to the total number of observations, 
 in a density histogram the *areas* of the bars add up to 1. The area of each bar
-can be calculated as simply the height *times* the width of the bar. Using a 
+can be calculated as its height *times* the width of the bar. Using a 
 density histogram allows us to properly overlay a normal distribution curve over
 the histogram since the curve is a normal probability density function that also
 has area under the curve of 1. Frequency and density histograms both display the
@@ -154,12 +156,11 @@ histogram.
 
 We can add a normal curve to this histogram by using the option `normal`.  
 
-```{r hist-height, eval = TRUE, echo = 1, results = "hide"}
+```{r hist-height, eval = TRUE, echo = 2, results = "hide"}
+keep if sex == 1
 histogram hgt, normal density
-graph export hgtnorm.png, replace
 ```
 
-![](hgtnorm.png)
 
 
 2.  Based on this plot, does it appear that the data follow a nearly normal 
@@ -174,7 +175,8 @@ close the histogram is to the curve. An alternative approach involves
 constructing a normal probability plot, also called a normal Q-Q plot for 
 "quantile-quantile".
 
-```{r qq, eval = TRUE, echo = 1, results = "hide"}
+```{r qq, eval = TRUE, echo = 2, results = "hide"}
+keep if sex == 1
 qnorm hgt
 graph export qqhgt.png, replace
 ```
@@ -183,18 +185,19 @@ graph export qqhgt.png, replace
 
 
 
-The x-axis values correspond to the quantiles of a theoretically normal curve with mean 0 and standard deviation 1 (i.e., the standard normal distribution).  The y-axis values correspond to the quantiles of the original unstandardized sample data. However, even if we were to standardize the sample data values, the Q-Q plot would look identical. A data set that is nearly normal will result in a probability plot where the points closely follow a diagonal line.  Any deviations from normality leads to deviations of these points from that line. 
+The x-axis values correspond to the quantiles of a theoretically normal curve with mean and standard deviation equal to the sample mean and standard deviation from the data.  The y-axis values correspond to the quantiles of the sample data. A data set that is nearly normal will result in a probability plot where the points closely follow a diagonal line.  Any deviations from normality leads to deviations of these points from that line. 
 
 The plot for female heights shows points that tend to follow the line but with some errant points towards the tails.  We're left with the same problem that we encountered with the histogram above: how close is close enough? 
 
 A useful way to address this question is to rephrase it as: what do probability plots look like for data that I *know* came from a normal distribution?  We can answer this by simulating data from a normal distribution.  First, we need to find the mean and standard deviation of our heights:
 
-```{r, eval = TRUE}
+```{r, eval = FALSE, echo = 2}
+keep if sex == 1
 summarize hgt
 ```
 
 
-Then, using this mean and standard deviation, we can simulate normal data with the same mean and standard deviation using `rnormal`.
+Then, using this mean and standard deviation, we can simulate normal data into a new variable called `simnorm` using the function `rnormal`.
 
 
 ```{r, eval = TRUE, results = "hide"}
@@ -213,7 +216,7 @@ We can take a look at the shape of our simulated data as well as its normal prob
 
 Okay, so now you have a slew of tools to judge whether or not a variable is normally distributed.  Why should we care?
 
-It turns out that statisticians know a lot about the normal distribution.  Once we decide that a random variable is approximately normal, we can answer all sorts of questions about that variable related to probability.  Take, for example, the question of, "What is the probability that a randomly chosen young adult female is taller than 6 feet (about 182 cm)?" (The study that published this data set is clear to point out that the sample was not random and thereforeinference to a general population is not suggested.  We do so here only as an exercise.)
+It turns out that statisticians know a lot about the normal distribution.  Once we decide that a random variable is approximately normal, we can answer all sorts of questions about that variable related to probability.  Take, for example, the question of, "What is the probability that a randomly chosen young adult female is taller than 6 feet (about 182 cm)?" (The study that published this data set is clear to point out that the sample was not random and therefore inference to a general population is not suggested.  We do so here only as an exercise.)
 
 If we assume that female heights are normally distributed (a very close approximation is also okay), we can find this probability by calculating a Z-score and consulting a Z table (also called a normal probability table).  In Stata, this is done in two steps.  First, we compute the Z-score in the same way discussed in the textbook, using Stata as a calculator.  
 
@@ -238,11 +241,11 @@ display 1 - normal(2.63)
 
 
 
-Assuming a normal distribution has allowed us to calculate a theoretical probability.  If we want to calculate the probability empirically, we simply   need to determine how many observations fall above 182 then divide this number by the total sample size. 
+Assuming a normal distribution has allowed us to calculate a theoretical probability.  If we want to calculate the probability empirically, we simply   need to determine how many observations fall above 182 then divide this number by the total number of females in the sample. 
 
-```{r count}
+```{r count, echo = c(2)}
+keep if sex == 1
 count if hgt > 182
-display 1 / 260
 ```
 
 Although the probabilities are not exactly the same, they are reasonably close.  The closer that your distribution is to being normal, the more accurate the theoretical probabilities will be.
