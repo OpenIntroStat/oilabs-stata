@@ -370,5 +370,5 @@ summary statistics.
 <div id="license">
 This is a product of OpenIntro that is released under a [Creative Commons 
 Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0).
-This lab was written for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel.
+This lab was adapted for Stata by Jenna R. Krall and written for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel.
 </div>
