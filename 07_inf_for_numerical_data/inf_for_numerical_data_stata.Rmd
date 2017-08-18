@@ -1,0 +1,156 @@
+---
+title: 'Inference for numerical data'
+output:
+  html_document:
+    css: ../lab.css
+    highlight: pygments
+    theme: cerulean
+    toc: true
+    toc_float: true
+---
+
+
+```{r global-options, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(oilabs)
+library(haven)
+data(nc)
+dat = nc
+dat = as.data.frame(dat)
+colnames(dat) = gsub("[.]", "_", colnames(dat))
+write_dta(data = dat, path = "nc.dta", version = 13)
+
+library(statamd)
+statapath = statamd::stata_engine_path()
+profile_do(dataset = "nc.dta")
+
+knitr::opts_chunk$set(eval = FALSE, engine = "stata", 
+    engine.path = statapath, comment = "")
+```
+
+## Getting Started
+
+### The data
+
+In 2004, the state of North Carolina released a large data set containing 
+information on births recorded in this state. This data set is useful to 
+researchers studying the relation between habits and practices of expectant 
+mothers and the birth of their children. We will work with a random sample of 
+observations from this data set.
+
+Load the `nc` data set into our workspace.
+
+```{r load-data}
+use "nc.dta"
+```
+
+We have observations on 13 different variables, some categorical and some 
+numerical. Each observation is a birth recorded in North Carolina.
+
+
+1.  How many cases are there in our sample?
+
+Remember that you can answer this question by viewing the data in the Data Editor or by looking at the bottom right in the *Properties* window.
+
+
+
+## Exploratory data analysis
+
+We will first start with analyzing the weight gained by mothers throughout the 
+pregnancy: `gained`.
+
+Using visualization and summary statistics, describe the distribution of weight 
+gained by mothers during pregnancy. The `summarize` function can be useful.
+
+```{r summary}
+summarize gained
+```
+
+1.  How many mothers are we missing weight gain data from?  **Hint:** The `codebook` command is useful for finding missing values.
+
+Next, consider the possible relationship between a mother's smoking habit and the 
+weight of her baby. Plotting the data is a useful first step because it helps 
+us quickly visualize trends, identify strong associations, and develop research
+questions.
+
+2.  Make a side-by-side boxplot of `habit` and `weight`. What does the plot 
+highlight about the relationship between these two variables?
+
+The box plots show how the medians of the two distributions compare, but we can
+also compare the means of the distributions using the following to 
+first sort the data by the `habit` variable, and then calculate the mean
+`weight` separately for these groups using the `summarize` function.
+
+```{r by-means}
+bysort weight: summarize weight
+```
+
+There is an observed difference, but is this difference statistically 
+significant? In order to answer this question we will conduct a hypothesis test.
+
+## Inference
+
+3.  Are all conditions necessary for inference satisfied? Comment on each. You can 
+compute the group sizes with the `summarize` command above.
+
+4.  Write the hypotheses for testing if the average weights of babies born to 
+smoking and non-smoking mothers are different.
+
+
+```{r inf-weight-habit-ht, tidy=FALSE}
+ttest weight, by(habit)
+```
+
+5.  Construct and record a confidence 
+interval for the difference between the weights of babies born to nonsmoking and 
+smoking mothers, and interpret this interval in context of the data. Note that by 
+default you'll get a 95% confidence interval. If you want to change the
+confidence level, add the option (`level(X)`) where X is a value
+between 0 and 100. 
+
+```{r inf-weight-habit-ht, tidy=FALSE}
+ttest weight, by(habit)
+```
+
+By default the function reports an interval for the difference `diff` specified as ($\mu_{nonsmoker} - \mu_{smoker}$)
+. 
+
+**FIX THIS**
+
+We can change this order by changing the reference category for habit.  using the `order` argument:
+
+```{r inf-weight-habit-ci, tidy=FALSE}
+inference(y = weight, x = habit, data = nc, statistic = "mean", type = "ci", 
+          method = "theoretical", order = c("smoker","nonsmoker"))
+```
+
+* * *
+
+## More Practice
+
+6.  Calculate a 95% confidence interval for the average length of pregnancies 
+(`weeks`) and interpret it in context. **Hint:** Try using the function `mean`.
+
+7.  Calculate a new confidence interval for the same parameter at the 90% 
+confidence level. You can change the confidence level using the same `level` option discussed above. Comment on the width of this interval versus 
+the one obtained in the previous exercise.
+
+8.  Conduct a hypothesis test evaluating whether the average weight gained by 
+younger mothers is different than the average weight gained by mature mothers.
+
+9.  Now, a non-inference task: Determine the age cutoff for younger and mature 
+mothers. Use a method of your choice, and explain how your method works.
+
+10. Pick a pair of variables: one numerical (response) and one categorical (explanatory). 
+Come up with a research question evaluating the relationship between these variables. 
+Formulate the question in a way that it can be answered using a hypothesis test
+and/or a confidence interval. Answer your question using Stata, report the statistical results, and also provide an explanation in 
+plain language. Be sure to check all assumptions, state your $\alpha$ level, and conclude 
+in context.
+
+<div id="license">
+This is a product of OpenIntro that is released under a [Creative Commons 
+Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0).
+This lab was adapted for Stata by Jenna R Krall and OpenIntro by Mine &Ccedil;etinkaya-Rundel from a lab written by the faculty and TAs of UCLA Statistics.
+</div>
