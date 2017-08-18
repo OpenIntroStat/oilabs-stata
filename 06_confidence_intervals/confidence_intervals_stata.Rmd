@@ -9,12 +9,6 @@ output:
     toc_float: true
 ---
 
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
-library(dplyr)
-library(ggplot2)
-library(oilabs)
-```
 
 
 ```{r global-options, include=FALSE}
