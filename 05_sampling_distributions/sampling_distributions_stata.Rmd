@@ -10,13 +10,7 @@ output:
     toc_float: true
 ---
 
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
-library(dplyr)
-library(ggplot2)
-library(oilabs)
-data(ames)
-```
+
 
 In this lab, we investigate the ways in which the statistics from a random 
 sample of data can serve as point estimates for population parameters. We're 
