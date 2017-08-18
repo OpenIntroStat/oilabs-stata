@@ -82,27 +82,6 @@ count if sex == "m":sex
 ```
 
 
-
-
-
-In order to doing thing separately, we can `preserve` the data, which makes a type of
-checkpoint.  We can then manipulate the data, dropping variables or rows, and performing 
-operations  When we want to go back to the checkpoint where we `preserve`d the data,
-we use the `restore` command to get back.
-
-Here we show how many cases there are, preserve the data set, keep only the females,
-show that the data has fewer rows, restore the data, and show the original, full
-data set is loaded back. 
-
-```{r preserve_restore, eval = TRUE}
-count
-preserve
-keep if sex == "f":sex
-count
-restore
-count
-```
-
 -->
 
 
