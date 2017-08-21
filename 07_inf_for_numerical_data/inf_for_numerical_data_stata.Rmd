@@ -97,11 +97,6 @@ compute the group sizes with the `summarize` command above.
 4.  Write the hypotheses for testing if the average weights of babies born to 
 smoking and non-smoking mothers are different.
 
-
-```{r inf-weight-habit-ht, tidy=FALSE}
-ttest weight, by(habit)
-```
-
 5.  Construct and record a confidence 
 interval for the difference between the weights of babies born to nonsmoking and 
 smoking mothers, and interpret this interval in context of the data. Note that by 
@@ -109,20 +104,21 @@ default you'll get a 95% confidence interval. If you want to change the
 confidence level, add the option (`level(X)`) where X is a value
 between 0 and 100. 
 
+By default the function reports an interval for the difference `diff` specified as ($\mu_{nonsmoker} - \mu_{smoker}$)
+. 
+
+
 ```{r inf-weight-habit-ht, tidy=FALSE}
 ttest weight, by(habit)
 ```
 
-By default the function reports an interval for the difference `diff` specified as ($\mu_{nonsmoker} - \mu_{smoker}$)
-. 
 
-**FIX THIS**
+We can change this order by creating a new indicator variable, `nonsmoker` that is 0 for smokers and 1 for non-smokers.  Then, we can use `ttest` with the new indicator variable. 
 
-We can change this order by changing the reference category for habit.  using the `order` argument:
-
-```{r inf-weight-habit-ci, tidy=FALSE}
-inference(y = weight, x = habit, data = nc, statistic = "mean", type = "ci", 
-          method = "theoretical", order = c("smoker","nonsmoker"))
+```{r ind-nonsmok, tidy=FALSE}
+generate nonsmoker = 1 if habit == 1
+replace nonsmoker = 0 if habit == 2
+ttest weight, by(nonsmoker)
 ```
 
 * * *
