@@ -77,8 +77,7 @@ graph export area.png, replace
 
 
 Let's also obtain some summary statistics. Note that we can do this using the
-`summarze` function. Some of the functions below should
-be self explanatory (like `Mean`, `Std. Dev.`,  `Min`, and `Max`). We can also see that `Obs` gives the number of observations.
+`summarze` function. 
 
 ```{r summ-area}
 summarize area
@@ -108,13 +107,13 @@ case in real life. Gathering information on an entire population is often
 extremely costly or impossible. Because of this, we often take a sample of 
 the population and use that to understand the properties of the population.
 
-Before we do this, we need to discuss the concept of `preserve` in Stata.  In Stata, you can only work with one dataset at a time.  We want to work with a sample from the full `ames` dataset, but we would also like to return to the full dataset later on.  Therefore, we will `preserve` the full `ames` dataset before moving forward.  
+Before we do this, we need to discuss the concept of `preserve` in Stata.  In Stata, we can only work with one dataset at a time.  We want to work with a sample from the full `ames` dataset, but we would also like to return to the full dataset later on.  Therefore, we will "preserve" the full `ames` dataset before moving forward by using the `preserve` command.  
 
 ```{r preserve}
 preserve
 ```
 
-Remember, we can also always read back in the original `ames.dta` dataset if we want to return to the full data.  However, the `preserve` command makes this a bit easier.
+Remember, we can also always read back in the original dataset with the command `use "ames.dta"` if we want to return to the full data.  However, the `preserve` command makes this a bit easier.
 
 If we were interested in estimating the mean living area in Ames based on a 
 sample, we can use the `sample` command to survey the population.
@@ -155,7 +154,7 @@ population.
 1.  Take a second sample, also of size 50. How does the 
     mean of this new sample compare with the mean of your original sample? Suppose we took two 
     more samples, one of size 100 and one of size 1000. Which would you think 
-    would provide a more accurate estimate of the population mean?  **Hint:** Use the `restore` function to return to the original, full dataset before sampling again.
+    would provide a more accurate estimate of the population mean?  **Hint:** Use the `restore, preserve` command below to return to the original, full dataset before sampling again.
     
 ```{r restore-preserve}
 restore, preserve
@@ -167,21 +166,23 @@ should expect when estimating the population mean this way. The distribution
 of sample means, called the *sampling distribution (of the mean)*, can help us understand 
 this variability. In this lab, because we have access to the population, we 
 can build up the sampling distribution for the sample mean by repeating the 
-above steps many times. Here we will generate 15,000 samples and compute the 
-sample mean of each. Note that we use `bootstrap` instead of `sample` to sample with replacement and compute the sample mean of each sample,  since sampling distributions are constructed by sampling
-with replacement.
+above steps many times. 
+
+Here we will generate 15,000 samples and compute the 
+sample mean of each. Note that we use `bootstrap` instead of `sample` to sample with replacement and compute the sample mean of each sample.  This is because sampling distributions are constructed by sampling
+with replacement.  
 
 ```{r loop}
 restore, preserve
 bootstrap stat=r(mean), saving("sample.dta", replace) size(50) reps(15000): summarize area
 ```
 
-Here we use Stata to take 15,000 different samples of size 50 from the population, calculate 
+Here we use Stata to take 15,000 different samples of size 50 from the population.  We know this because the `reps` specifies 15,000 and the `size` specifies 50.  We then calculate 
 the mean of each sample, and store each result in a dataset called `sample.dta`. Next, we review how this set of code works.
 
 1.  How many elements are there in `sample.dta`?  Describe the sampling 
     distribution, and be sure to specifically note its center. Make sure to include 
-    a plot of the distribution in your answer.
+    a plot of the distribution in your answer.  **Hint:** Be sure to read in the newly created dataset, `sample.dta`.
 
 ## Interlude: Sampling distributions
 
@@ -195,14 +196,14 @@ Note that in practice one rarely gets to build true sampling distributions,
 because we rarely have access to data from the entire population. 
 
 Without the `bootstrap` function, this would be painful. We would have to 
-manually run the following code 15,000 times 
+manually run the following code 15,000 times: 
 
 ```{r sample-code, eval=FALSE}
 sample 50, count
 summarize area
 ```
 
-as well as store the resulting sample means each time in a separate vector.
+as well as store the resulting sample means each time in a separate dataset
 
 Note that for each of the 15,000 times we computed a mean, we did so from a 
 **different** sample!
@@ -356,7 +357,7 @@ summary statistics.
     size of 15. Based on this sampling distribution, what would you guess to 
     be the mean sale price of homes in Ames?
 
-1.  Of the sampling distributions from 2 and 3, which has a smaller spread?  If
+1.  Of the sampling distributions from Exercises 9 and 10, which has a smaller spread?  If
     we're concerned with making estimates that are more often close to the 
     true value, would we prefer a sampling distribution with a large or small spread?
 
