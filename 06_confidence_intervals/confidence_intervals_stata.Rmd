@@ -64,7 +64,7 @@ use "ames.dta"
 ```
 
 In this lab we'll start with a simple random sample of size 60 from the 
-population. Do not forget to `preserve` the original dataset within your Stata session.  See lab 5 for more information.
+population. Do not forget to `preserve` the original dataset within your Stata session.  See lab 5 on sampling distributions for more information.
 
 ```{r sample}
 preserve
@@ -128,7 +128,7 @@ confident that the true average size of houses in Ames lies between the lower an
 
 In this case we have the rare luxury of knowing the true population mean since we 
 have data on the entire population. Let's calculate this value so that
-we can determine if our confidence intervals actually capture it. 
+we can determine if our confidence intervals actually capture it. Remember to restore the original data before using the `summarize` command.
 
 ```{r pop-mean}
 restore, preserve
@@ -146,7 +146,7 @@ summarize area
 Using Stata, we're going to collect many samples to learn more about how sample 
 means and confidence intervals vary from one sample to another.
 
-First, let's introduce the function `mean`, which gives the sample mean, standard error, and 95\% confidence interval for the population mean.
+First, let's introduce the Stata function `mean`, which gives the sample mean, standard error, and 95\% confidence interval for the population mean.
 
 ```{r mean-fun}
 mean area
@@ -159,26 +159,33 @@ Here is the rough outline:
 -   Repeat these steps 50 times and save the dataset as `confint.dta`
 -   Use these means and standard deviations to calculate the lower and upper bounds of the confidence intervals.
 
-We can accomplish this using the `bootstrap` function that we introduced in lab 5. The following lines of 
-code takes 50 random samples of size `n` from population (and remember we defined 
-$n = 60$ earlier), and computes the upper and lower bounds of the confidence intervals based on these samples.
+We can accomplish this using the `bootstrap` function that we introduced in lab 5 that covered sampling distributions.   First, the bootstrap command creates a new dataset, `confint.dta` that saves the mean and standard deviation from each of 50 samples of size 60.
 
 ```{r calculate-50-cis}
 bootstrap mean=r(mean) sd=r(sd), saving("confint.dta", replace) size(60) reps(50): summarize area
+```
+
+Then, using this dataset of all the means and standard deviations, we compute the standard error as $s / \sqrt{n}$.  Last, we compute the lower and upper bounds using $\bar{x} \pm 1.96 \times \text{SE}$
+
+```{r calc-ci}
 use "confint.dta", clear
 generate se = sd / sqrt(60)
 generate lower = mean - 1.96 * se
 generate upper = mean + 1.96 * se
 ```
 
-Open up the Data Editor to view the first five intervals:
+
+Open up the Data Editor to view the first five intervals.
 
 Next we'll create a plot similar to Figure 4.8 on page 175 of [OpenIntro Statistics, 3rd
-Edition](https://www.openintro.org/os). The first step will be to create a new variable in 
-the `ci` data frame that indicates whether the interval does or does not capture the 
+Edition](https://www.openintro.org/os). The first step will be to create a new variable `capturemu` that indicates whether the interval does or does not capture the 
 true population mean. Note that capturing this value would mean the lower bound of the
 confidence interval is below the value and upper bound of the confidence interval is
 above the value. 
+
+
+
+
 
 ```{r capture-mu}
 generate capturemu = "no" 
@@ -187,19 +194,17 @@ replace capturemu = "yes" if lower < 1499.69 & upper > 1499.69
 
 You'll notice we created the new variable, `capturemu` in two steps.  First, we set `capturemu` to "no" for all observations.  Then, we set `capturemu` = "yes" for observations where the lower bound was less than the population mean and the upper bound was greater than the population mean, or observations where the interval contains the population mean.
 
-We now have all the information we need to create the plot. 
- 
 
-```{r plot-ci}
-qplot(data = ci, x = replicate, y = x_bar, color = capture_mu) +
-  geom_errorbar(aes(ymin = lower, ymax = upper)) + 
-  geom_hline(data = params, aes(yintercept = mu), color = "darkgray") + # draw vertical line
-  coord_flip()
+ Then, we can plot the mean and 1.96 times the standard error using the `serrbar` command.  Note that we first must create an "id" variable to indicate the different samples and different confidence intervals.  The "id" variable will be on the x-axis in our final plot.
+ 
+```{r}
+generate id = _n
+serrbar mean se id, scale (1.96)
 ```
 
+
 1.  What proportion of your confidence intervals include the true population mean? Is 
-    this proportion exactly equal to the confidence level? If not, explain why. Make 
-    sure to include your plot in your answer.
+    this proportion exactly equal to the confidence level? If not, explain why.  **Hint:** You may wish to answer this question using the command `tabulate` to explore the variable `capturemu`.
 
 * * *
 
@@ -208,11 +213,10 @@ qplot(data = ci, x = replicate, y = x_bar, color = capture_mu) +
 1.  Pick a confidence level of your choosing, provided it is not 95%. What is 
     the appropriate critical value?
 
-1.  Calculate 50 confidence intervals at the confidence level you chose in the 
-    previous question, and plot all intervals on one plot, and calculate the proportion 
+1.  Calculate 50 confidence intervals of `area` at the confidence level you chose in the 
+    previous question using samples of size 60. Plot all intervals on one plot, and calculate the proportion 
     of intervals that include the true population mean. How does this percentage compare 
-    to the confidence level selected for the intervals? Make 
-    sure to include your plot in your answer.
+    to the confidence level selected for the intervals? 
 
 <div id="license">
 This is a product of OpenIntro that is released under a [Creative Commons 
