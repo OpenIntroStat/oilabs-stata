@@ -26,6 +26,14 @@ data(atheism)
 dat = atheism
 dat = as.data.frame(dat)
 colnames(dat) = gsub("[.]", "_", colnames(dat))
+
+# make factor into character for nationality (easier to subset)
+# change labels for Stata
+dat <- mutate(dat, nationality = as.character(nationality),
+              response = factor(response, levels = c("atheist", "non-atheist"),
+                   labels = c("atheist", "nonatheist"))) 
+
+
 write_dta(data = dat, path = "atheism.dta", version = 13)
 
 library(statamd)
@@ -56,15 +64,15 @@ Take a moment to review the report then address the following questions.
 Turn your attention to Table 6 (pages 15 and 16), which reports the
 sample size and response percentages for all 57 countries. While this is
 a useful format to summarize the data, we will base our analysis on the
-original data set of individual responses to the survey. Load this data
-set into Stata with the following command.
+original data set of individual responses to the survey. Load the `atheism.dta` data
+set into Stata.
 
-```{r head-data}
+```{r head-data, echo = F}
 use "atheism.dta"
 ```
 
-1.   What does each row of Table 6 correspond to? What does each row of 
-    `atheism` correspond to?
+1.   What does each row of Table 6 correspond to? What does each row of the
+    `atheism` data correspond to?
 
 To investigate the link between these two ways of organizing this data, take a 
 look at the estimated proportion of atheists in the United States. Towards 
@@ -74,11 +82,11 @@ the same number using the `atheism` data.
 1.  Using the command below, keep
     only the rows in `atheism` associated with respondents to the 2012 survey 
     from the United States. Next, calculate the proportion of atheist 
-    responses. Does it agree with the percentage in Table 6? If not, why?  **Note:** Recall the `preserve` command from lab 5.
+    responses. Does it agree with the percentage in Table 6? If not, why?  **Note:** Recall the `preserve` command from lab 5.  
 
 ```{r us-atheism}
 preserve
-keep if nationality == "United States" & year == "2012"
+keep if nationality == "United States" & year == 2012
 ```
 
 ## Inference on proportions
@@ -99,19 +107,16 @@ hypothesis test.
     Are you confident all conditions are met?
 
 If the conditions for inference are reasonable, we can either calculate
-the standard error and construct the interval by hand, or use the `proportion` function.
+the standard error and construct the interval by hand, or use the `proportion` function in Stata.
 
 ```{r us-atheism-ci, tidy = FALSE}
 proportion response
 ```
 
-Note that since the goal is to construct an interval estimate for a 
-proportion, it's necessary to specify what constitutes a "success", which here 
-is a response of `"atheist"`.
+Stata gives us the interval estimates for both `atheist` and `nonatheist` groups. 
 
 Although formal confidence intervals and hypothesis tests don't show up in the 
-report, suggestions of inference appear at the bottom of page 7: "In general, 
-the error margin for surveys of this kind is $\pm$ 3--5% at 95% confidence".
+WIN-Gallup International report, suggestions of inference appear at the bottom of page 7: "In general, the error margin for surveys of this kind is $\pm$ 3--5% at 95% confidence".
 
 1.  Based on the Stata output, what is the margin of error for the estimate of the 
     proportion of the proportion of atheists in US in 2012?
@@ -120,9 +125,7 @@ the error margin for surveys of this kind is $\pm$ 3--5% at 95% confidence".
     proportion of atheists in 2012 in two other countries of your choice, and 
     report the associated margins of error. Be sure to note whether the 
     conditions for inference are met, and interpet the interval in context of the data.
-    It may be helpful to create new data sets for each of the two countries first, and 
-    then use these data sets in the `proportion` function to construct the confidence 
-    intervals.
+
 
 ## How does the proportion affect the margin of error?
 
@@ -147,8 +150,6 @@ Since sample size is irrelevant to this discussion, let's just set it to
 some value ($n = 1000$) and use this value in the following calculations.
 
 
-FIX HERE
-
 The first step is to make a variable `p` that is a sequence from 0 to 1 with 
 each number incremented by 0.01. We can then create a variable of the margin of 
 error (`me`) associated with each of these values of `p` using the familiar 
@@ -156,16 +157,15 @@ approximate formula ($ME = 2 \times SE$).
 
 ```{r p-me}
 clear
-set n = 50
-seq?
+set obs 101
+generate p = (_n - 1) * .01
 generate me = 2 * sqrt(p * (1 - p) / 1000)
-#p <- seq(from = 0, to = 1, by = 0.01)
 ```
 
 Lastly, we plot the two variables against each other to reveal their relationship.
 
 ```{r me-plot}
-twoway p me
+twoway scatter me p
 ```
 
 1.  Describe the relationship between `p` and `me`. Include the margin of
@@ -247,19 +247,21 @@ from 2005 and 2012 for 39 countries.
 For some of the exercises below we will conduct inference comparing two proportions. In
 such cases we have a response variable that is categorical, and an explanatory variable
 that is also categorical, and we are comparing the proportions of success of the response
-variable across the levels of the explanatory variable. This means, in the `proportion` function
-we need to specify both variables, response as `y` and explanatory as `x`.
+variable across the levels of the explanatory variable. This means, in the Stata function
+we need to specify both variables, response as `y` and explanatory as `x`.  Additionally, we will use a new function, `prtest`:
 
 ```{r eval=FALSE}
-proportion response_var, by(explanatory_variable)
+prtest response_var, by(explanatory_variable)
 ```
+
+The function `prtest` requires that the response variable take on the value "1" for a success and "0" for a failure.  Using Stata, generate a new variable that is 1 for atheists and 0 for non-atheists.  **Hint:** You may want to first use `codebook` to explore the `response` variable.  While the variable in the Data Editor looks like it takes on the values "atheist" and "nonatheist", those are only the labels.  What are the values of the variable `response`?
 
 
 1.   Is there convincing evidence that Spain has seen a change in its atheism index 
     between 2005 and 2012? As always, write out the hypotheses for any tests you 
     conduct and outline the status of the conditions for inference. If you find a 
-    significant difference, also quantify this difference with a confidence interval. \
-    *Hint:* First create a new data set for respondents from Spain. 
+    significant difference, also quantify this difference with a confidence interval. 
+    *Hint:* First subset your data for respondents from Spain. 
 
 1.   Is there convincing evidence that the US has seen a change in its atheism index 
     between 2005 and 2012? As always, write out the hypotheses for any tests you 
@@ -268,7 +270,7 @@ proportion response_var, by(explanatory_variable)
 
 1.   If in fact there has been no change in the atheism index in the countries 
     listed in Table 4, in how many of those countries would you expect to 
-    detect a change (at a significance level of 0.05) simply by chance?\
+    detect a change (at a significance level of 0.05) simply by chance?
     *Hint:* Review the definition of the Type 1 error.
 
 1.   Suppose you're hired by the local government to estimate the proportion of 
