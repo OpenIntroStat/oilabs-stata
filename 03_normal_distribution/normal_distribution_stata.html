@@ -207,7 +207,7 @@ div.tocify {
 <p>In this lab we’ll investigate the probability distribution that is most central to statistics: the normal distribution. If we are confident that our data are nearly normal, that opens the door to many powerful statistical methods. Here we’ll use the graphical tools of Stata to assess the normality of our data and also learn how to generate random numbers from a normal distribution.</p>
 <div id="the-data" class="section level2">
 <h2>The Data</h2>
-<p>This week we’ll be working with measurements of body dimensions from the dataset “bdims.dta”. Read your dataset into Stata using the methods described in the “Introduction to Stata” lab.</p>
+<p>This week we’ll be working with measurements of body dimensions from the dataset <code>bdims.dta</code>. Read your dataset into Stata using the methods described in the “Introduction to Stata” lab.</p>
 <p>Once you have read in your dataset, open up the Data Browser in Stata to view the data. This data set contains measurements from 247 men and 260 women, most of whom were considered healthy young adults.</p>
 <p>You’ll see that for every observation we have 25 measurements, many of which are either diameters or girths. We’ll be focusing on just three columns to get started: weight in kg (<code>wgt</code>), height in cm (<code>hgt</code>), and <code>sex</code> (1 indicates female, 2 indicates male).</p>
 <!-- We see
@@ -280,46 +280,6 @@ count if sex == "m":sex
   247
 ```
 
-
-
-
-
-In order to doing thing separately, we can `preserve` the data, which makes a type of
-checkpoint.  We can then manipulate the data, dropping variables or rows, and performing 
-operations  When we want to go back to the checkpoint where we `preserve`d the data,
-we use the `restore` command to get back.
-
-Here we show how many cases there are, preserve the data set, keep only the females,
-show that the data has fewer rows, restore the data, and show the original, full
-data set is loaded back. 
-
-
-```stata
-count
-preserve
-keep if sex == "f":sex
-count
-restore
-count
-```
-
-```
- . count
-  507
-
-. preserve
-
-. keep if sex == "f":sex
-(247 observations deleted)
-
-. count
-  260
-
-. restore
-
-. count
-  507
-```
 
 -->
 <ol style="list-style-type: decimal">

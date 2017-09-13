@@ -17,7 +17,7 @@ learn how to generate random numbers from a normal distribution.
 
 ## The Data
 
-This week we'll be working with measurements of body dimensions from the dataset "bdims.dta".  Read your dataset into Stata using the methods described in the "Introduction to Stata" lab.
+This week we'll be working with measurements of body dimensions from the dataset `bdims.dta`.  Read your dataset into Stata using the methods described in the "Introduction to Stata" lab.
 
 Once you have read in your dataset, open up the Data Browser in Stata to view the data.  This data set 
 contains measurements from 247 men and 260 women, most of whom were considered 
