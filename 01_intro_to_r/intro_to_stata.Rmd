@@ -14,16 +14,31 @@ output:
 ---
 
 ```{r global_options, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(oilabs)
 library(statamd)
+library(haven)
+
+data(arbuthnot)
+dat = arbuthnot
+dat = as.data.frame(dat)
+colnames(dat) = gsub("[.]", "_", colnames(dat))
+write_dta(data = dat, path = "arbuthnot.dta", version = 13)
+
 statapath = statamd::stata_engine_path()
-write_stata_old('arbuthnot.dta')
 profile_do(dataset = "arbuthnot.dta")
+
+
+data(present)
+dat = present
+dat = as.data.frame(dat)
+colnames(dat) = gsub("[.]", "_", colnames(dat))
+write_dta(data = dat, path = "present.dta", version = 13)
+
 
 knitr::opts_chunk$set(eval = FALSE, engine = "stata", engine.path = statapath, comment = "")
 
-library(dplyr)
-library(ggplot2)
-#library(oilabs)
 ```
 
 
