@@ -70,7 +70,7 @@ a histogram:
 
 ```{r area-hist, echo = 1, results = "hide"}
 histogram area
-graph export area.png, replace
+# graph export area.png, replace
 # ![](area.png)
 ```
 
