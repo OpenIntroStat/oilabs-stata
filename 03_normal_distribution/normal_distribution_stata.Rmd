@@ -259,47 +259,47 @@ generate sage = (age -  28.76923) / 8.85319
 summarize che_de
 generate sche = (che_de -  17.72462) / 1.832064 
 histogram sbii, title("Histogram for female bii_di")
-graph export histbii.png, replace
+graph export more/histbii.png, replace
 
 histogram selb, title("Histogram for female elb_di")
-graph export histelb.png, replace
+graph export more/histelb.png, replace
 
 histogram sage, title("Histogram for female general age")
-graph export histage.png, replace
+graph export more/histage.png, replace
 
 histogram sche, title("Histogram for female che_de")
-graph export histche.png, replace
+graph export more/histche.png, replace
 
 qnorm sbii, ytitle("") title("Normal QQ plot B")
-graph export qqb.png, replace
+graph export more/qqb.png, replace
 
 qnorm selb, ytitle("") title("Normal QQ plot C")
-graph export qqc.png, replace
+graph export more/qqc.png, replace
 
 qnorm sage, ytitle("") title("Normal QQ plot D")
-graph export qqd.png, replace
+graph export more/qqd.png, replace
 
 qnorm sche, ytitle("") title("Normal QQ plot A")
-graph export qqa.png, replace
+graph export more/qqa.png, replace
 
 ```
 
 
-![](histbii.png)
+![](more/histbii.png)
 
-![](histelb.png)
+![](more/histelb.png)
 
-![](histage.png)
+![](more/histage.png)
 
-![](histche.png)
+![](more/histche.png)
 
-![](qqa.png)
+![](more/qqa.png)
 
-![](qqb.png)
+![](more/qqb.png)
 
-![](qqc.png)
+![](more/qqc.png)
 
-![](qqd.png)
+![](more/qqd.png)
 
 
 <div id="license"> This is a product of OpenIntro that is released under a [Creative Commons Attribution-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-sa/3.0).  This lab was adapted for Stata by Jenna R. Krall and John Muschelli and adapted for OpenIntro by Andrew Bray and Mine &Ccedil;etinkaya-Rundel  from a lab written by Mark Hansen of UCLA Statistics.
