@@ -9,7 +9,6 @@ README.html
 *key.Rmd
 *key.html
 *.do
-*.png
 sample.dta
 confint.dta
 confint_99.dta
