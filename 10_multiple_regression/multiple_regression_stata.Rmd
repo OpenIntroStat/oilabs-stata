@@ -88,21 +88,18 @@ are evaluated more favorably. Let's create a scatterplot to see if this appears
 to be the case.  We need the variables `score` and average beauty rating of the professor, `bty_avg`.
 
 ```{r scatter-score-bty_avg}
-twoway score bty_avg
+twoway scatter score bty_avg
 ```
 
 Before we draw conclusions about the trend, compare the number of observations 
 in the data frame with the approximate number of points on the scatterplot. 
 Is anything awry?
 
-
-HOW TOJITTER?
-
-4.  Replot the scatterplot, but this time use `geom = "jitter"`. What was
+4.  Replot the scatterplot, but this time use the option `jitter(5)`. What was
     misleading about the initial scatterplot?
 
 ```{r scatter-score-bty_avg-jitter}
-qplot(data = evals, x = bty_avg, y = score, geom = "jitter")
+twoway scatter score bty_avg, jitter(5)
 ```
 
 5.  Let's see if the apparent trend in the plot is something more than
@@ -111,18 +108,14 @@ qplot(data = evals, x = bty_avg, y = score, geom = "jitter")
     model and interpret the slope. Is average beauty score a statistically significant
     predictor? Does it appear to be a practically significant predictor?
     
-Add the line of the bet fit model to your plot using the following:
-    
-    HOW TO ADD LOBF
+Add the line of the best fit model to your plot using the following:
     
 ```{r scatter-score-bty_avg-line-se}
-qplot(data = evals, x = bty_avg, y = score, geom = "jitter") +
-  geom_smooth(method = "lm")
+twoway scatter score bty_avg || lfit score bty_avg
 ```
 
-The blue line is the model. 
+The red line is the model, indicated in the legend as "Fitted values". 
 
-RESIDUAL PLOT
 
 6.  Use residual plots to evaluate whether the conditions of least squares
     regression are reasonable. Provide plots and comments for each one (see
@@ -137,7 +130,7 @@ take a look at the relationship between one of these scores and the average
 beauty score.
 
 ```{r bty-rel}
-twoway bty_avg bty_f1lower
+twoway scatter bty_avg bty_f1lower
 cor bty_avg bty_f1lower
 ```
 
@@ -147,9 +140,7 @@ relationships between all beauty variables (columns 13 through 19) using the
 following command:
 
 ```{r bty-rels}
-evals %>%
-  select(contains("bty")) %>%
-  ggpairs()
+graph matrix bty_f1lower bty_f1upper bty_f2upper bty_m1lower bty_m1upper bty_m2upper bty_avg
 ```
 
 These variables are collinear (correlated), and adding more than one of these 
@@ -165,6 +156,8 @@ term into the model.
 regress score bty_avg i.gender
 ```
 
+Note that we use `i.gender` because gender is a categorical variable.
+
 7.  P-values and parameter estimates should only be trusted if the
     conditions for the regression are reasonable. Verify that the conditions
     for this model are reasonable using diagnostic plots.
@@ -172,12 +165,12 @@ regress score bty_avg i.gender
 8.  Is `bty_avg` still a significant predictor of `score`? Has the addition
     of `gender` to the model changed the parameter estimate for `bty_avg`?
 
-Note that the estimate for `gender` is now called `gendermale`. You'll see this 
+Note that the row in the regression output for `gender` is now called `gender male`. You'll see this 
 name change whenever you introduce a categorical variable. The reason is that Stata 
 recodes `gender` from having the values of `female` and `male` to being an 
-indicator variable called `gendermale` that takes a value of $0$ for females and
-a value of $1$ for males. (Such variables are often referred to as "dummy" 
-variables.)
+indicator variable called `gender male` that takes a value of $0$ for females and
+a value of $1$ for males (Such variables are often referred to as "dummy" 
+variables.).
 
 As a result, for females, the parameter estimate is multiplied by zero, leaving 
 the intercept and slope form familiar from simple regression.
@@ -188,23 +181,23 @@ the intercept and slope form familiar from simple regression.
 &= \hat{\beta}_0 + \hat{\beta}_1 \times bty\_avg\end{aligned}
 \]
 
-<!-- We can plot this line and the line corresponding to males with the following  -->
-<!-- custom function. -->
 
-<!-- ```{r twoLines} -->
-<!-- qplot(data = evals, x = bty_avg, y = score, color = gender) + -->
-<!--   geom_smooth(method = "lm", formula = y ~ x, se = FALSE) -->
-<!-- ``` -->
 
 9.  What is the equation of the line corresponding to males? (*Hint:* For
     males, the parameter estimate is multiplied by 1.) For two professors
     who received the same beauty rating, which gender tends to have the
     higher course evaluation score?
 
-The decision to call the indicator variable `gendermale` instead of`genderfemale`
+The decision to call the indicator variable `gender male` instead of`gender female`
 has no deeper meaning. Stata simply codes the category that comes first 
 alphabetically as a $0$. (You can change the reference level of a categorical 
-variable, which is the level that is coded as a 0, using `b(X).gender` in place of `i.gender` in the model, where `X` is the desired reference level. 
+variable, which is the level that is coded as a 0, using `ibX.gender` in place of `i.gender` in the model, where `X` is the desired reference level. In the case of gender, there are two categories: (1) male and (2) female.  Therefore, to change the reference group to females,
+
+```{r recodegender}
+regress score bty_avg ib2.gender
+```
+
+
 10. Create a new model with `gender` removed and `rank` 
     added in. How does Stata appear to handle categorical variables that have more 
     than two levels? Note that the rank variable has three levels: `teaching`, 
@@ -222,14 +215,14 @@ with `bty_avg` scores that are one point apart.
 We will start with a full model that predicts professor score based on rank, 
 ethnicity, gender, language of the university where they got their degree, age, 
 proportion of students that filled out evaluations, class size, course level, 
-number of professors, number of credits, average beauty rating, outfit, and 
+number of professors teaching the course, number of credits, average beauty rating, outfit, and 
 picture color.
 
 11. Which variable would you expect to have the highest p-value in this model? 
     Why? *Hint:* Think about which variable would you expect to not have any 
     association with the professor score.
 
-Let's run the model...
+Let's run the model:
 
 ```{r m_full, tidy = FALSE}
 regress score rank ethnicity gender language age cls_perc_eval cls_students  cls_level cls_profs cls_credits bty_avg pic_outfit pic_color
@@ -250,11 +243,7 @@ regress score rank ethnicity gender language age cls_perc_eval cls_students  cls
 15. Using backward-selection and p-value as the selection criterion,
     determine the best model. You do not need to show all steps in your
     answer, just the output for the final model. Also, write out the linear
-    model for predicting score based on the final model you settle on.  The Stata command for backwards regression is:
-    
-```{r}
-stepwise pr(0.05): score rank ethnicity gender language age cls_perc_eval cls_students  cls_level cls_profs cls_credits bty_avg pic_outfit pic_color
-```
+    model for predicting score based on the final model you settle on.  
 
 16. Verify that the conditions for this model are reasonable using diagnostic 
     plots.
@@ -277,4 +266,3 @@ This is a product of OpenIntro that is released under a [Creative Commons Attrib
 Mine &Ccedil;etinkaya-Rundel and Andrew Bray.
 </div>
 
-## References
