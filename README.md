@@ -7,19 +7,21 @@ particular chapters in all three versions of OpenIntro Statistics, a free and
 open-source textbook. The textbook as well as the html version of the labs can
 be found at [http://www.openintro.org/stat/labs.php](http://www.openintro.org/stat/labs.php).
 
-This repository is a fork of the dplyr and ggplot2 OpenIntro labs, converted to Stata.  Information about the datasets can be found in the "oiLabs-dplyr-ggplot" repository at [https://github.com/andrewpbray/oiLabs-dplyr-ggplot](https://github.com/andrewpbray/oiLabs-dplyr-ggplot).   
+This repository is a fork of the tidyverse OpenIntro labs, converted to Stata.  
+Information about the datasets can be found in the [oiLabs-tidy](https://github.com/OpenIntroStat/oiLabs-tidy) repository.   
 
 We currently support our source files in the .Rmd format, which can be output into
 html format (though output to pdf is also possible). The source files are processed
-using the [knitr](http://yihui.name/knitr/) package in R.  Stata must be installed to edit and recompile the labs.
+using the [knitr](http://yihui.name/knitr/) package in R.  
+Stata must be installed to edit and recompile the labs.
 
-To update the Stata labs, you need to first install the `statamd` package in R from [https://github.com/muschellij2/statamd](https://github.com/muschellij2/statamd):
+To update the Stata labs, you need to first install the `statamd` package in R 
+from [https://github.com/muschellij2/statamd](https://github.com/muschellij2/statamd):
 
 ```
 library(devtools)
 install_github("muschellij2/statamd")
 ```
-
 
 It is our hope that these materials are useful for instructors and students of 
 statistics.  If you end up developing some interesting variants of these labs or 
