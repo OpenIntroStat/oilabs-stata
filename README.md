@@ -7,8 +7,9 @@ particular chapters in all three versions of OpenIntro Statistics, a free and
 open-source textbook. The textbook as well as the html version of the labs can
 be found at [http://www.openintro.org/stat/labs.php](http://www.openintro.org/stat/labs.php).
 
-This repository is a fork of the tidyverse OpenIntro labs, converted to Stata.  
-Information about the datasets can be found in the [oiLabs-tidy](https://github.com/OpenIntroStat/oiLabs-tidy) repository.   
+This repository is a fork of the tidyverse OpenIntro labs, converted to Stata by
+[Jenna Krall](https://github.com/kralljr). Information about the datasets can be 
+found in the [oiLabs-tidy](https://github.com/OpenIntroStat/oiLabs-tidy) repository.
 
 We currently support our source files in the .Rmd format, which can be output into
 html format (though output to pdf is also possible). The source files are processed
