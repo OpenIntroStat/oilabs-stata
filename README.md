@@ -30,7 +30,16 @@ creating new ones, please let us know!
 
 ## Labs
 
-1. [Introduction to Stata](https://github.com/OpenIntroStat/oiLabs-stata/blob/master/01_intro_to_stata/intro_to_stata.html)
+1. [Introduction to Stata](https://openintrostat.github.io/oiLabs-stata/01_intro_to_stata/intro_to_stata.html)
+1. [Introduction to data](https://openintrostat.github.io/oiLabs-stata/02_intro_to_data/intro_to_data_stata.html)
+1. [The normal distribution](https://openintrostat.github.io/oiLabs-stata/03_normal_distribution/normal_distribution_stata.html)
+1. [Probability](https://openintrostat.github.io/oiLabs-stata/04_probability/probability_stata.html)
+1. [Foundations for statistical inference - Sampling distributions]()
+1. [Foundations for statistical inference - Confidence intervals](https://openintrostat.github.io/oiLabs-stata/06_confidence_intervals/confidence_intervals_stata.html)
+1. [Inference for numerical data](https://openintrostat.github.io/oiLabs-stata/07_inf_for_numerical_data/inf_for_numerical_data_stata.html)
+1. [Inference for categorical data]()
+1. [Introduction to linear regression](https://openintrostat.github.io/oiLabs-stata/09_simple_regression/simple_regression_stata.html)
+1. [Multiple linear regression](https://openintrostat.github.io/oiLabs-stata/10_multiple_regression/multiple_regression_stata.html)
 
 ## Feedback / collaboration
 
