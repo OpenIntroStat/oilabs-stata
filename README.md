@@ -28,6 +28,10 @@ It is our hope that these materials are useful for instructors and students of
 statistics.  If you end up developing some interesting variants of these labs or 
 creating new ones, please let us know!
 
+## Labs
+
+1. [Introduction to Stata](https://github.com/OpenIntroStat/oiLabs-stata/blob/master/01_intro_to_stata/intro_to_stata.html)
+
 ## Feedback / collaboration
 
 Your feedback is most welcomed! If you have suggestions for minor updates (fixing
