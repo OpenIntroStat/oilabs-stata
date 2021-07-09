@@ -9,7 +9,9 @@ be found at [http://www.openintro.org/stat/labs.php](http://www.openintro.org/st
 
 This repository is a fork of the tidyverse OpenIntro labs, converted to Stata by
 [Jenna Krall](https://github.com/kralljr). Information about the datasets can be 
-found in the [oiLabs-tidy](https://github.com/OpenIntroStat/oiLabs-tidy) repository.
+found in the [
+
+-tidy](https://github.com/OpenIntroStat/oilabs-tidy) repository.
 
 We currently support our source files in the .Rmd format, which can be output into
 html format (though output to pdf is also possible). The source files are processed
@@ -30,16 +32,16 @@ creating new ones, please let us know!
 
 ## Labs
 
-1. [Introduction to Stata](https://openintrostat.github.io/oiLabs-stata/01_intro_to_stata/intro_to_stata.html)
-1. [Introduction to data](https://openintrostat.github.io/oiLabs-stata/02_intro_to_data/intro_to_data_stata.html)
-1. [The normal distribution](https://openintrostat.github.io/oiLabs-stata/03_normal_distribution/normal_distribution_stata.html)
-1. [Probability](https://openintrostat.github.io/oiLabs-stata/04_probability/probability_stata.html)
+1. [Introduction to Stata](https://openintrostat.github.io/oilabs-stata/01_intro_to_stata/intro_to_stata.html)
+1. [Introduction to data](https://openintrostat.github.io/oilabs-stata/02_intro_to_data/intro_to_data_stata.html)
+1. [The normal distribution](https://openintrostat.github.io/oilabs-stata/03_normal_distribution/normal_distribution_stata.html)
+1. [Probability](https://openintrostat.github.io/oilabs-stata/04_probability/probability_stata.html)
 1. [Foundations for statistical inference - Sampling distributions](https://openintro.shinyapps.io/sampling_distributions_stata/)
-1. [Foundations for statistical inference - Confidence intervals](https://openintrostat.github.io/oiLabs-stata/06_confidence_intervals/confidence_intervals_stata.html)
-1. [Inference for numerical data](https://openintrostat.github.io/oiLabs-stata/07_inf_for_numerical_data/inf_for_numerical_data_stata.html)
+1. [Foundations for statistical inference - Confidence intervals](https://openintrostat.github.io/oilabs-stata/06_confidence_intervals/confidence_intervals_stata.html)
+1. [Inference for numerical data](https://openintrostat.github.io/oilabs-stata/07_inf_for_numerical_data/inf_for_numerical_data_stata.html)
 1. [Inference for categorical data](https://openintro.shinyapps.io/inf_for_categorical_data_stata/)
-1. [Introduction to linear regression](https://openintrostat.github.io/oiLabs-stata/09_simple_regression/simple_regression_stata.html)
-1. [Multiple linear regression](https://openintrostat.github.io/oiLabs-stata/10_multiple_regression/multiple_regression_stata.html)
+1. [Introduction to linear regression](https://openintrostat.github.io/oilabs-stata/09_simple_regression/simple_regression_stata.html)
+1. [Multiple linear regression](https://openintrostat.github.io/oilabs-stata/10_multiple_regression/multiple_regression_stata.html)
 
 ## Feedback / collaboration
 
